@@ -1,0 +1,47 @@
+{
+  "exported_at": "2026-07-24T01:57:55.331Z",
+  "project": "Project-DSA-II",
+  "observation_count": 5,
+  "observations": [
+    {
+      "id": 3,
+      "project": "Project-DSA-II",
+      "type": "manual",
+      "text": "Project: RUPP Campus Navigation (Smart Building Mapping and Navigation System). Group 1. Topic: Using Graphs, Trees, and Hash Tables for campus navigation.",
+      "created_at": "2026-07-24T01:57:46.927Z",
+      "created_at_epoch": 1784858266927
+    },
+    {
+      "id": 4,
+      "project": "Project-DSA-II",
+      "type": "manual",
+      "text": "Three DSA layers: Graph (Dijkstra shortest path), Tree (BST/AVL for category filtering), Hash Table (O(1) building info lookup).",
+      "created_at": "2026-07-24T01:57:46.927Z",
+      "created_at_epoch": 1784858266927
+    },
+    {
+      "id": 5,
+      "project": "Project-DSA-II",
+      "type": "manual",
+      "text": "Team roles: Heng Hour (Leader/Integration), Heng Pengly (Graph), Yos Sak (Hash Table), Sem Vatanakpanha (Tree), Kimheng (UI/Tester).",
+      "created_at": "2026-07-24T01:57:46.927Z",
+      "created_at_epoch": 1784858266927
+    },
+    {
+      "id": 6,
+      "project": "Project-DSA-II",
+      "type": "manual",
+      "text": "OpenCode bootstrap is set up with skill symlinks, MCP servers (claude-mem + playwright), and cross-session memory via opencode-bootstrap repo.",
+      "created_at": "2026-07-24T01:57:46.927Z",
+      "created_at_epoch": 1784858266927
+    },
+    {
+      "id": 7,
+      "project": "Project-DSA-II",
+      "type": "manual",
+      "text": "Project workspace: /home/chenla/Downloads/Project-DSA-II/",
+      "created_at": "2026-07-24T01:57:46.927Z",
+      "created_at_epoch": 1784858266927
+    }
+  ]
+}
