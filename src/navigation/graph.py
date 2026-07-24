@@ -1,4 +1,5 @@
 import heapq
+from collections import deque
 
 
 class Graph:
@@ -17,6 +18,49 @@ class Graph:
 
     def get_neighbors(self, node):
         return list(self.adjacency_list.get(node, {}).items())
+
+    def bfs(self, start, end):
+        if start not in self.adjacency_list or end not in self.adjacency_list:
+            return None, float('inf')
+
+        queue = deque([(start, [start])])
+        visited = {start}
+
+        while queue:
+            current, path = queue.popleft()
+            if current == end:
+                cost = sum(self.get_edge_weight(path[i], path[i+1]) for i in range(len(path)-1))
+                return path, cost
+            for neighbor in self.adjacency_list[current]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append((neighbor, path + [neighbor]))
+
+        return None, float('inf')
+
+    def dfs(self, start, end):
+        if start not in self.adjacency_list or end not in self.adjacency_list:
+            return None, float('inf')
+
+        stack = [(start, [start])]
+        visited = set()
+
+        while stack:
+            current, path = stack.pop()
+            if current in visited:
+                continue
+            visited.add(current)
+            if current == end:
+                cost = sum(self.get_edge_weight(path[i], path[i+1]) for i in range(len(path)-1))
+                return path, cost
+            for neighbor in self.adjacency_list[current]:
+                if neighbor not in visited:
+                    stack.append((neighbor, path + [neighbor]))
+
+        return None, float('inf')
+
+    def get_edge_weight(self, node1, node2):
+        return self.adjacency_list.get(node1, {}).get(node2, 0)
 
     def shortest_path(self, start, end):
         if start not in self.adjacency_list or end not in self.adjacency_list:

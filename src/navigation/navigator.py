@@ -18,9 +18,18 @@ class Navigator:
     def find_floor(self, floor_id):
         return self.hash_table.get(f"F_{floor_id}")
 
+    def bfs(self, start, end):
+        return self.graph.bfs(start, end)
+
+    def dfs(self, start, end):
+        return self.graph.dfs(start, end)
+
     def shortest_path(self, start_room, end_room):
         path, cost = self.graph.shortest_path(start_room, end_room)
         return path, cost
+
+    def get_buildings(self):
+        return sorted([k.replace("B_", "") for k in self.hash_table.keys() if k.startswith("B_")])
 
     def show_campus_hierarchy(self):
         return str(self.tree)

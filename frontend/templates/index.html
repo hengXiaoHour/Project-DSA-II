@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUPP Campus Navigation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 10px 16px;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 10px 16px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .toolbar .title {
+            font-weight: 700;
+            color: #1a365d;
+            font-size: 15px;
+            margin-right: 6px;
+        }
+        .toolbar label { font-size: 12px; font-weight: 600; color: #4a5568; }
+        .toolbar select {
+            padding: 6px 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 12px;
+            background: #f7fafc;
+            min-width: 110px;
+            max-width: 160px;
+        }
+        .toolbar select:focus { border-color: #4299e1; outline: none; }
+
+        .radio-group { display: flex; gap: 3px; flex-wrap: wrap; }
+        .radio-group label {
+            display: flex; align-items: center; gap: 2px;
+            font-size: 11px; font-weight: 500; cursor: pointer;
+            padding: 5px 10px; border: 2px solid #e2e8f0; border-radius: 6px;
+            transition: all 0.15s;
+        }
+        .radio-group label:hover { border-color: #4299e1; background: #ebf8ff; }
+        .radio-group label:has(input:checked) { border-color: #4299e1; background: #ebf8ff; }
+
+        .main-area {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+            margin-top: 10px;
+        }
+
+        .canvas-wrapper {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 0;
+        }
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+        }
+        .canvas-container canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .result-bar {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            background: rgba(255,255,255,0.95);
+            padding: 8px 14px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            pointer-events: none;
+            font-size: 12px;
+        }
+        .result-bar .algo-badge {
+            background: #4299e1; color: white;
+            padding: 2px 8px; border-radius: 4px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .result-bar .path-text {
+            font-weight: 600; color: #2b6cb0;
+            flex: 1; min-width: 120px; font-size: 12px;
+        }
+        .result-bar .cost-text {
+            font-weight: 700; color: #38a169; white-space: nowrap; font-size: 12px;
+        }
+        .result-bar .error-text { color: #e53e3e; font-weight: 600; font-size: 12px; }
+        .result-bar.placeholder {
+            background: rgba(255,255,255,0.7); box-shadow: none;
+            border: 1px dashed #cbd5e0;
+        }
+        .result-bar.placeholder .path-text { color: #a0aec0; font-weight: 400; }
+
+        .legend {
+            display: flex; gap: 12px; flex-shrink: 0;
+            padding-top: 8px; font-size: 11px; flex-wrap: wrap;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+        .right-panel {
+            width: 220px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .info-card {
+            background: white; border-radius: 10px; padding: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            flex: 1; overflow-y: auto; min-height: 0;
+        }
+        .info-card h3 {
+            font-size: 12px; font-weight: 700; color: #2d3748;
+            margin-bottom: 8px; padding-bottom: 4px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .building-row {
+            display: flex; justify-content: space-between;
+            padding: 3px 0; font-size: 11px; color: #4a5568;
+            border-bottom: 1px solid #f7fafc;
+        }
+        .building-row .connections { color: #a0aec0; font-size: 10px; }
+
+        @media (max-width: 768px) {
+            body { overflow-y: auto; height: auto; padding: 8px; }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .toolbar .title { text-align: center; margin-right: 0; }
+            .toolbar .field-row {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .toolbar .field-row label { min-width: 30px; }
+            .toolbar .field-row select { flex: 1; min-width: 0; max-width: none; }
+            .radio-group { justify-content: center; }
+
+            .main-area {
+                flex-direction: column;
+                min-height: 400px;
+            }
+            .right-panel {
+                width: 100%;
+                flex-direction: row;
+            }
+            .right-panel .info-card { flex: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .right-panel { flex-direction: column; }
+            .result-bar .path-text { min-width: 80px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar" id="toolbar">
+        <span class="title">RUPP Campus Navigation</span>
+        <div class="field-row">
+            <label>From</label>
+            <select id="start"></select>
+        </div>
+        <div class="field-row">
+            <label>To</label>
+            <select id="end"></select>
+        </div>
+        <div class="radio-group">
+            <label><input type="radio" name="algo" value="bfs"> BFS</label>
+            <label><input type="radio" name="algo" value="dfs"> DFS</label>
+            <label><input type="radio" name="algo" value="dijkstra" checked> Dijkstra</label>
+        </div>
+        
+    </div>
+
+    <div class="main-area">
+        <div class="canvas-wrapper">
+            <div class="canvas-container">
+                <div class="result-bar" id="resultBar">
+                    <span class="algo-badge">...</span>
+                    <span class="path-text">Loading...</span>
+                </div>
+                <canvas id="graphCanvas" width="650" height="480"></canvas>
+            </div>
+            <div class="legend">
+                <span class="legend-item"><span class="legend-color" style="background:#4299e1;"></span> Node</span>
+                <span class="legend-item"><span class="legend-color" style="background:#38a169;"></span> Start</span>
+                <span class="legend-item"><span class="legend-color" style="background:#e53e3e;"></span> End</span>
+                <span class="legend-item"><span class="legend-color" style="background:#d69e2e;"></span> Path</span>
+                <span class="legend-item"><span class="legend-color" style="background:#a0aec0;"></span> Edge</span>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="info-card">
+                <h3>Buildings</h3>
+                <div id="buildingList"></div>
+            </div>
+            <div class="info-card">
+                <h3>Campus Tree</h3>
+                <div class="hierarchy">RUPP Campus 1</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const buildings = {{ buildings | tojson }};
+        const edges = {{ edges | tojson }};
+
+        const positions = {
+            "Entrance": { x: 100, y: 420 },
+            "Building A": { x: 200, y: 350 },
+            "Library": { x: 200, y: 160 },
+            "NICC/CKCC": { x: 200, y: 70 },
+            "Building D": { x: 350, y: 120 },
+            "Building Stem": { x: 400, y: 240 },
+            "Building B": { x: 320, y: 360 },
+            "Study Office": { x: 500, y: 290 },
+            "Building C": { x: 500, y: 140 },
+            "Building T": { x: 580, y: 80 },
+            "Canteen": { x: 500, y: 400 }
+        };
+
+        function init() {
+            const start = document.getElementById('start');
+            const end = document.getElementById('end');
+            buildings.forEach(b => {
+                start.innerHTML += `<option value="${b}">${b}</option>`;
+                end.innerHTML += `<option value="${b}">${b}</option>`;
+            });
+            start.value = "Building A";
+            end.value = "Entrance";
+
+            const list = document.getElementById('buildingList');
+            buildings.forEach(b => {
+                const conns = edges.filter(e => e[0] === b || e[1] === b);
+                list.innerHTML += `<div class="building-row"><span>${b}</span><span class="connections">${conns.length} connections</span></div>`;
+            });
+
+            start.addEventListener('change', findPath);
+            end.addEventListener('change', findPath);
+            document.querySelectorAll('input[name="algo"]').forEach(r => {
+                r.addEventListener('change', findPath);
+            });
+
+            findPath();
+        }
+
+        function drawGraph(highlightPath = null, startNode = null, endNode = null) {
+            const canvas = document.getElementById('graphCanvas');
+            const container = canvas.parentElement;
+            const dpr = window.devicePixelRatio || 1;
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, w, h);
+
+            const scaleX = w / 650;
+            const scaleY = h / 480;
+            const scale = Math.min(scaleX, scaleY) * 0.85;
+            const offsetX = (w - 650 * scale) / 2;
+            const offsetY = (h - 480 * scale) / 2;
+
+            const pathSet = new Set();
+            if (highlightPath) {
+                for (let i = 0; i < highlightPath.length - 1; i++) {
+                    pathSet.add([highlightPath[i], highlightPath[i+1]].sort().join('||'));
+                }
+            }
+
+            for (const [a, b, wgt] of edges) {
+                const p1 = positions[a], p2 = positions[b];
+                if (!p1 || !p2) continue;
+                const sx = p1.x * scale + offsetX, sy = p1.y * scale + offsetY;
+                const ex = p2.x * scale + offsetX, ey = p2.y * scale + offsetY;
+                const isPath = pathSet.has([a, b].sort().join('||'));
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(ex, ey);
+                ctx.strokeStyle = isPath ? '#d69e2e' : '#a0aec0';
+                ctx.lineWidth = isPath ? 4 : 2;
+                ctx.stroke();
+
+                const mx = (sx + ex) / 2 + 6;
+                const my = (sy + ey) / 2 - 4;
+                ctx.fillStyle = '#4a5568';
+                ctx.font = `${11 * scale}px Arial`;
+                ctx.fillText(wgt + 'm', mx, my);
+            }
+
+            const r = 20 * scale;
+            for (const [name, pos] of Object.entries(positions)) {
+                const cx = pos.x * scale + offsetX, cy = pos.y * scale + offsetY;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                if (name === startNode) ctx.fillStyle = '#38a169';
+                else if (name === endNode) ctx.fillStyle = '#e53e3e';
+                else if (highlightPath && highlightPath.includes(name)) ctx.fillStyle = '#d69e2e';
+                else ctx.fillStyle = '#4299e1';
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${10 * scale}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(name.replace('Building ', 'B.'), cx, cy);
+            }
+        }
+
+        function findPath() {
+            const start = document.getElementById('start').value;
+            const end = document.getElementById('end').value;
+            const algo = document.querySelector('input[name="algo"]:checked').value;
+            const bar = document.getElementById('resultBar');
+            bar.className = 'result-bar';
+            bar.innerHTML = '<span class="algo-badge">...</span><span class="path-text">Calculating...</span>';
+
+            fetch('/api/find_path', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ start, end, algorithm: algo })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.path) {
+                    bar.innerHTML = `
+                        <span class="algo-badge">${data.algorithm.toUpperCase()}</span>
+                        <span class="path-text">${data.path.join(' -> ')}</span>
+                        <span class="cost-text">${data.cost}m</span>`;
+                    drawGraph(data.path, start, end);
+                } else {
+                    bar.innerHTML = `
+                        <span class="algo-badge">${algo.toUpperCase()}</span>
+                        <span class="error-text">No path found between ${start} and ${end}</span>`;
+                    drawGraph(null, start, end);
+                }
+            })
+            .catch(err => {
+                bar.innerHTML = `<span class="algo-badge">ERR</span><span class="error-text">${err.message}</span>`;
+            })
+            .finally(() => {});
+        }
+
+        init();
+        drawGraph();
+        window.addEventListener('resize', () => drawGraph());
+    </script>
+</body>
+</html>
