@@ -352,9 +352,14 @@ class TestAPI:
     def setup_method(self):
         from frontend.app import app as flask_app
         flask_app.config["TESTING"] = True
+        flask_app.STATE_FILE = "/tmp/test_graph_state.json"
         self.client = flask_app.test_client()
-        # clear state by loading empty
         self.client.post("/api/graph/load", json={"nodes": {}, "edges": []})
+
+    def teardown_method(self):
+        import os
+        if os.path.exists("/tmp/test_graph_state.json"):
+            os.remove("/tmp/test_graph_state.json")
 
     def _add_node(self, name, lat=11.56, lng=104.89):
         return self.client.post("/api/nodes", json={"name": name, "lat": lat, "lng": lng})

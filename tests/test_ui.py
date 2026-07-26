@@ -21,9 +21,11 @@ def wait_for_server(url, timeout=15):
 
 @pytest.fixture(scope="module")
 def server():
-    state_file = os.path.join(os.path.dirname(__file__), "..", "doc", "sample_campus.json")
-    if os.path.exists(state_file):
-        os.remove(state_file)
+    import shutil
+    sample_file = os.path.join(os.path.dirname(__file__), "..", "doc", "sample_campus.json")
+    backup_file = "/tmp/sample_campus_backup.json"
+    if os.path.exists(sample_file):
+        shutil.copy2(sample_file, backup_file)
 
     proc = subprocess.Popen(
         [sys.executable, "-m", "frontend.app"],
@@ -38,8 +40,9 @@ def server():
     yield "http://localhost:5000"
     proc.terminate()
     proc.wait()
-    if os.path.exists(state_file):
-        os.remove(state_file)
+    if os.path.exists(backup_file):
+        shutil.copy2(backup_file, sample_file)
+        os.remove(backup_file)
 
 
 @pytest.fixture(scope="module")
