@@ -4,3 +4,4 @@ venv/
 .venv/
 .opencode/
 .workflow/
+doc/graph_state.json
