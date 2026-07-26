@@ -1,0 +1,1085 @@
+{
+  "meta": {
+    "source_image": "492310378_992476366350410_3871241228977053295_n.jpg",
+    "image_width": 2048,
+    "image_height": 1448,
+    "pixels_per_meter": 3.53,
+    "note": "Coordinates are in source image pixel space; weights (length_m) are estimated using pixels_per_meter scale factor. Adjust pixels_per_meter for accuracy if the true map scale bar measurement differs."
+  },
+  "nodes": {
+    "Building D": {
+      "id": "Building D",
+      "type": "building",
+      "x": 465.46,
+      "y": 542.59
+    },
+    "RUPP STEM Building": {
+      "id": "RUPP STEM Building",
+      "type": "building",
+      "x": 687.4,
+      "y": 485.42
+    },
+    "RUPP Study Office": {
+      "id": "RUPP Study Office",
+      "type": "building",
+      "x": 784.25,
+      "y": 609.54
+    },
+    "RUPP Canteen": {
+      "id": "RUPP Canteen",
+      "type": "building",
+      "x": 965.03,
+      "y": 555.87
+    },
+    "Hun Sen Building ( Building T )": {
+      "id": "Hun Sen Building ( Building T )",
+      "type": "building",
+      "x": 1179.37,
+      "y": 297.72
+    },
+    "CKCC": {
+      "id": "CKCC",
+      "type": "building",
+      "x": 284.15,
+      "y": 558.61
+    },
+    "NICC": {
+      "id": "NICC",
+      "type": "building",
+      "x": 305.79,
+      "y": 698.95
+    },
+    "Building A": {
+      "id": "Building A",
+      "type": "building",
+      "x": 891.66,
+      "y": 823.0
+    },
+    "Building B": {
+      "id": "Building B",
+      "type": "building",
+      "x": 589.04,
+      "y": 413.67
+    },
+    "Building C": {
+      "id": "Building C",
+      "type": "building",
+      "x": 958.55,
+      "y": 326.4
+    },
+    "J1": {
+      "id": "J1",
+      "type": "junction",
+      "x": 1105.32,
+      "y": 1102.37
+    },
+    "J2": {
+      "id": "J2",
+      "type": "junction",
+      "x": 1071.91,
+      "y": 846.94
+    },
+    "J3": {
+      "id": "J3",
+      "type": "junction",
+      "x": 643.23,
+      "y": 902.08
+    },
+    "J4": {
+      "id": "J4",
+      "type": "junction",
+      "x": 376.69,
+      "y": 930.95
+    },
+    "J5": {
+      "id": "J5",
+      "type": "junction",
+      "x": 336.8,
+      "y": 610.51
+    },
+    "J6": {
+      "id": "J6",
+      "type": "junction",
+      "x": 597.68,
+      "y": 567.72
+    },
+    "J7": {
+      "id": "J7",
+      "type": "junction",
+      "x": 312.7,
+      "y": 479.06
+    },
+    "J8": {
+      "id": "J8",
+      "type": "junction",
+      "x": 579.83,
+      "y": 449.99
+    },
+    "J9": {
+      "id": "J9",
+      "type": "junction",
+      "x": 1031.79,
+      "y": 493.94
+    },
+    "J10": {
+      "id": "J10",
+      "type": "junction",
+      "x": 762.81,
+      "y": 426.89
+    },
+    "J11": {
+      "id": "J11",
+      "type": "junction",
+      "x": 771.72,
+      "y": 424.9
+    },
+    "J12": {
+      "id": "J12",
+      "type": "junction",
+      "x": 792.59,
+      "y": 529.81
+    },
+    "J13": {
+      "id": "J13",
+      "type": "junction",
+      "x": 1297.79,
+      "y": 787.56
+    },
+    "J14": {
+      "id": "J14",
+      "type": "junction",
+      "x": 1239.26,
+      "y": 338.8
+    },
+    "J15": {
+      "id": "J15",
+      "type": "junction",
+      "x": 1047.98,
+      "y": 365.15
+    },
+    "J16": {
+      "id": "J16",
+      "type": "junction",
+      "x": 1036.68,
+      "y": 367.83
+    },
+    "J17": {
+      "id": "J17",
+      "type": "junction",
+      "x": 1151.05,
+      "y": 1089.51
+    },
+    "J18": {
+      "id": "J18",
+      "type": "junction",
+      "x": 1114.06,
+      "y": 839.93
+    }
+  },
+  "edges": {
+    "road_segments": [
+      {
+        "road_label": "N1",
+        "from": "J1",
+        "to": "J2",
+        "from_xy": [
+          1105.32,
+          1102.37
+        ],
+        "to_xy": [
+          1071.91,
+          846.94
+        ],
+        "length_px": 257.61,
+        "length_m": 72.98
+      },
+      {
+        "road_label": "N2",
+        "from": "J2",
+        "to": "J3",
+        "from_xy": [
+          1072.31,
+          845.79
+        ],
+        "to_xy": [
+          643.23,
+          902.08
+        ],
+        "length_px": 432.76,
+        "length_m": 122.6
+      },
+      {
+        "road_label": "N3",
+        "from": "J3",
+        "to": "J4",
+        "from_xy": [
+          643.82,
+          900.43
+        ],
+        "to_xy": [
+          376.69,
+          930.95
+        ],
+        "length_px": 268.86,
+        "length_m": 76.17
+      },
+      {
+        "road_label": "N4",
+        "from": "J4",
+        "to": "J5",
+        "from_xy": [
+          371.0,
+          936.34
+        ],
+        "to_xy": [
+          336.8,
+          610.51
+        ],
+        "length_px": 327.62,
+        "length_m": 92.81
+      },
+      {
+        "road_label": "N5",
+        "from": "J3",
+        "to": "J6",
+        "from_xy": [
+          642.23,
+          895.11
+        ],
+        "to_xy": [
+          597.68,
+          567.72
+        ],
+        "length_px": 330.4,
+        "length_m": 93.6
+      },
+      {
+        "road_label": "N6",
+        "from": "J5",
+        "to": "J6",
+        "from_xy": [
+          336.76,
+          606.77
+        ],
+        "to_xy": [
+          594.1,
+          568.98
+        ],
+        "length_px": 260.1,
+        "length_m": 73.68
+      },
+      {
+        "road_label": "N7",
+        "from": "J5",
+        "to": "J7",
+        "from_xy": [
+          336.97,
+          610.77
+        ],
+        "to_xy": [
+          312.7,
+          479.06
+        ],
+        "length_px": 133.93,
+        "length_m": 37.94
+      },
+      {
+        "road_label": "N8",
+        "from": "J6",
+        "to": "J8",
+        "from_xy": [
+          597.8,
+          569.15
+        ],
+        "to_xy": [
+          579.83,
+          449.99
+        ],
+        "length_px": 120.51,
+        "length_m": 34.14
+      },
+      {
+        "road_label": "N9",
+        "from": "J6",
+        "to": "J9",
+        "from_xy": [
+          602.73,
+          562.55
+        ],
+        "to_xy": [
+          1031.79,
+          493.94
+        ],
+        "length_px": 434.5,
+        "length_m": 123.09
+      },
+      {
+        "road_label": "N11",
+        "from": "J8",
+        "to": "J10",
+        "from_xy": [
+          585.47,
+          452.52
+        ],
+        "to_xy": [
+          762.81,
+          426.89
+        ],
+        "length_px": 179.18,
+        "length_m": 50.76
+      },
+      {
+        "road_label": "N12",
+        "from": "J11",
+        "to": "J12",
+        "from_xy": [
+          771.72,
+          424.9
+        ],
+        "to_xy": [
+          792.59,
+          529.81
+        ],
+        "length_px": 106.97,
+        "length_m": 30.3
+      },
+      {
+        "road_label": "N13",
+        "from": "J2",
+        "to": "J13",
+        "from_xy": [
+          1071.09,
+          848.73
+        ],
+        "to_xy": [
+          1297.79,
+          787.56
+        ],
+        "length_px": 234.81,
+        "length_m": 66.52
+      },
+      {
+        "road_label": "N14",
+        "from": "J13",
+        "to": "J14",
+        "from_xy": [
+          1296.77,
+          782.65
+        ],
+        "to_xy": [
+          1239.26,
+          338.8
+        ],
+        "length_px": 447.56,
+        "length_m": 126.79
+      },
+      {
+        "road_label": "N15",
+        "from": "J14",
+        "to": "J15",
+        "from_xy": [
+          1241.28,
+          336.12
+        ],
+        "to_xy": [
+          1047.98,
+          365.15
+        ],
+        "length_px": 195.46,
+        "length_m": 55.37
+      },
+      {
+        "road_label": "N16",
+        "from": "J9",
+        "to": "J16",
+        "from_xy": [
+          1033.23,
+          490.92
+        ],
+        "to_xy": [
+          1036.68,
+          367.83
+        ],
+        "length_px": 123.14,
+        "length_m": 34.89
+      },
+      {
+        "road_label": "N17",
+        "from": "J17",
+        "to": "J18",
+        "from_xy": [
+          1151.05,
+          1089.51
+        ],
+        "to_xy": [
+          1114.06,
+          839.93
+        ],
+        "length_px": 252.3,
+        "length_m": 71.47
+      }
+    ],
+    "building_access_links": [
+      {
+        "from": "J2",
+        "to": "Building A",
+        "length_px": 30.66,
+        "length_m": 8.69,
+        "type": "access_link"
+      },
+      {
+        "from": "J3",
+        "to": "Building A",
+        "length_px": 28.57,
+        "length_m": 8.09,
+        "type": "access_link"
+      },
+      {
+        "from": "J5",
+        "to": "Building D",
+        "length_px": 53.83,
+        "length_m": 15.25,
+        "type": "access_link"
+      },
+      {
+        "from": "J5",
+        "to": "CKCC",
+        "length_px": 15.55,
+        "length_m": 4.4,
+        "type": "access_link"
+      },
+      {
+        "from": "J5",
+        "to": "NICC",
+        "length_px": 26.98,
+        "length_m": 7.64,
+        "type": "access_link"
+      },
+      {
+        "from": "J6",
+        "to": "Building D",
+        "length_px": 37.03,
+        "length_m": 10.49,
+        "type": "access_link"
+      },
+      {
+        "from": "J6",
+        "to": "RUPP STEM Building",
+        "length_px": 54.59,
+        "length_m": 15.47,
+        "type": "access_link"
+      },
+      {
+        "from": "J7",
+        "to": "Building D",
+        "length_px": 82.71,
+        "length_m": 23.43,
+        "type": "access_link"
+      },
+      {
+        "from": "J7",
+        "to": "CKCC",
+        "length_px": 25.96,
+        "length_m": 7.36,
+        "type": "access_link"
+      },
+      {
+        "from": "J7",
+        "to": "Building B",
+        "length_px": 86.84,
+        "length_m": 24.6,
+        "type": "access_link"
+      },
+      {
+        "from": "J8",
+        "to": "Building D",
+        "length_px": 68.46,
+        "length_m": 19.39,
+        "type": "access_link"
+      },
+      {
+        "from": "J8",
+        "to": "RUPP STEM Building",
+        "length_px": 38.7,
+        "length_m": 10.96,
+        "type": "access_link"
+      },
+      {
+        "from": "J8",
+        "to": "Building B",
+        "length_px": 18.88,
+        "length_m": 5.35,
+        "type": "access_link"
+      },
+      {
+        "from": "J9",
+        "to": "RUPP Canteen",
+        "length_px": 28.72,
+        "length_m": 8.14,
+        "type": "access_link"
+      },
+      {
+        "from": "J10",
+        "to": "RUPP STEM Building",
+        "length_px": 29.43,
+        "length_m": 8.34,
+        "type": "access_link"
+      },
+      {
+        "from": "J10",
+        "to": "Building B",
+        "length_px": 17.47,
+        "length_m": 4.95,
+        "type": "access_link"
+      },
+      {
+        "from": "J11",
+        "to": "RUPP STEM Building",
+        "length_px": 34.88,
+        "length_m": 9.88,
+        "type": "access_link"
+      },
+      {
+        "from": "J11",
+        "to": "Building B",
+        "length_px": 16.55,
+        "length_m": 4.69,
+        "type": "access_link"
+      },
+      {
+        "from": "J12",
+        "to": "RUPP STEM Building",
+        "length_px": 49.59,
+        "length_m": 14.05,
+        "type": "access_link"
+      },
+      {
+        "from": "J12",
+        "to": "RUPP Study Office",
+        "length_px": 21.7,
+        "length_m": 6.15,
+        "type": "access_link"
+      },
+      {
+        "from": "J14",
+        "to": "Hun Sen Building ( Building T )",
+        "length_px": 34.52,
+        "length_m": 9.78,
+        "type": "access_link"
+      },
+      {
+        "from": "J15",
+        "to": "Hun Sen Building ( Building T )",
+        "length_px": 49.76,
+        "length_m": 14.1,
+        "type": "access_link"
+      },
+      {
+        "from": "J15",
+        "to": "Building C",
+        "length_px": 35.02,
+        "length_m": 9.92,
+        "type": "access_link"
+      },
+      {
+        "from": "J16",
+        "to": "Hun Sen Building ( Building T )",
+        "length_px": 58.68,
+        "length_m": 16.62,
+        "type": "access_link"
+      },
+      {
+        "from": "J16",
+        "to": "Building C",
+        "length_px": 33.09,
+        "length_m": 9.38,
+        "type": "access_link"
+      },
+      {
+        "from": "J18",
+        "to": "Building A",
+        "length_px": 29.45,
+        "length_m": 8.34,
+        "type": "access_link"
+      }
+    ]
+  },
+  "adjacency_list": {
+    "J1": [
+      {
+        "to": "J2",
+        "weight_m": 72.98,
+        "via": "N1"
+      }
+    ],
+    "J2": [
+      {
+        "to": "J1",
+        "weight_m": 72.98,
+        "via": "N1"
+      },
+      {
+        "to": "J3",
+        "weight_m": 122.6,
+        "via": "N2"
+      },
+      {
+        "to": "J13",
+        "weight_m": 66.52,
+        "via": "N13"
+      },
+      {
+        "to": "Building A",
+        "weight_m": 8.69,
+        "via": "access_link"
+      }
+    ],
+    "J3": [
+      {
+        "to": "J2",
+        "weight_m": 122.6,
+        "via": "N2"
+      },
+      {
+        "to": "J4",
+        "weight_m": 76.17,
+        "via": "N3"
+      },
+      {
+        "to": "J6",
+        "weight_m": 93.6,
+        "via": "N5"
+      },
+      {
+        "to": "Building A",
+        "weight_m": 8.09,
+        "via": "access_link"
+      }
+    ],
+    "J4": [
+      {
+        "to": "J3",
+        "weight_m": 76.17,
+        "via": "N3"
+      },
+      {
+        "to": "J5",
+        "weight_m": 92.81,
+        "via": "N4"
+      }
+    ],
+    "J5": [
+      {
+        "to": "J4",
+        "weight_m": 92.81,
+        "via": "N4"
+      },
+      {
+        "to": "J6",
+        "weight_m": 73.68,
+        "via": "N6"
+      },
+      {
+        "to": "J7",
+        "weight_m": 37.94,
+        "via": "N7"
+      },
+      {
+        "to": "Building D",
+        "weight_m": 15.25,
+        "via": "access_link"
+      },
+      {
+        "to": "CKCC",
+        "weight_m": 4.4,
+        "via": "access_link"
+      },
+      {
+        "to": "NICC",
+        "weight_m": 7.64,
+        "via": "access_link"
+      }
+    ],
+    "J6": [
+      {
+        "to": "J3",
+        "weight_m": 93.6,
+        "via": "N5"
+      },
+      {
+        "to": "J5",
+        "weight_m": 73.68,
+        "via": "N6"
+      },
+      {
+        "to": "J8",
+        "weight_m": 34.14,
+        "via": "N8"
+      },
+      {
+        "to": "J9",
+        "weight_m": 123.09,
+        "via": "N9"
+      },
+      {
+        "to": "Building D",
+        "weight_m": 10.49,
+        "via": "access_link"
+      },
+      {
+        "to": "RUPP STEM Building",
+        "weight_m": 15.47,
+        "via": "access_link"
+      }
+    ],
+    "J7": [
+      {
+        "to": "J5",
+        "weight_m": 37.94,
+        "via": "N7"
+      },
+      {
+        "to": "Building D",
+        "weight_m": 23.43,
+        "via": "access_link"
+      },
+      {
+        "to": "CKCC",
+        "weight_m": 7.36,
+        "via": "access_link"
+      },
+      {
+        "to": "Building B",
+        "weight_m": 24.6,
+        "via": "access_link"
+      }
+    ],
+    "J8": [
+      {
+        "to": "J6",
+        "weight_m": 34.14,
+        "via": "N8"
+      },
+      {
+        "to": "J10",
+        "weight_m": 50.76,
+        "via": "N11"
+      },
+      {
+        "to": "Building D",
+        "weight_m": 19.39,
+        "via": "access_link"
+      },
+      {
+        "to": "RUPP STEM Building",
+        "weight_m": 10.96,
+        "via": "access_link"
+      },
+      {
+        "to": "Building B",
+        "weight_m": 5.35,
+        "via": "access_link"
+      }
+    ],
+    "J9": [
+      {
+        "to": "J6",
+        "weight_m": 123.09,
+        "via": "N9"
+      },
+      {
+        "to": "J16",
+        "weight_m": 34.89,
+        "via": "N16"
+      },
+      {
+        "to": "RUPP Canteen",
+        "weight_m": 8.14,
+        "via": "access_link"
+      }
+    ],
+    "J10": [
+      {
+        "to": "J8",
+        "weight_m": 50.76,
+        "via": "N11"
+      },
+      {
+        "to": "RUPP STEM Building",
+        "weight_m": 8.34,
+        "via": "access_link"
+      },
+      {
+        "to": "Building B",
+        "weight_m": 4.95,
+        "via": "access_link"
+      }
+    ],
+    "J11": [
+      {
+        "to": "J12",
+        "weight_m": 30.3,
+        "via": "N12"
+      },
+      {
+        "to": "RUPP STEM Building",
+        "weight_m": 9.88,
+        "via": "access_link"
+      },
+      {
+        "to": "Building B",
+        "weight_m": 4.69,
+        "via": "access_link"
+      }
+    ],
+    "J12": [
+      {
+        "to": "J11",
+        "weight_m": 30.3,
+        "via": "N12"
+      },
+      {
+        "to": "RUPP STEM Building",
+        "weight_m": 14.05,
+        "via": "access_link"
+      },
+      {
+        "to": "RUPP Study Office",
+        "weight_m": 6.15,
+        "via": "access_link"
+      }
+    ],
+    "J13": [
+      {
+        "to": "J2",
+        "weight_m": 66.52,
+        "via": "N13"
+      },
+      {
+        "to": "J14",
+        "weight_m": 126.79,
+        "via": "N14"
+      }
+    ],
+    "J14": [
+      {
+        "to": "J13",
+        "weight_m": 126.79,
+        "via": "N14"
+      },
+      {
+        "to": "J15",
+        "weight_m": 55.37,
+        "via": "N15"
+      },
+      {
+        "to": "Hun Sen Building ( Building T )",
+        "weight_m": 9.78,
+        "via": "access_link"
+      }
+    ],
+    "J15": [
+      {
+        "to": "J14",
+        "weight_m": 55.37,
+        "via": "N15"
+      },
+      {
+        "to": "Hun Sen Building ( Building T )",
+        "weight_m": 14.1,
+        "via": "access_link"
+      },
+      {
+        "to": "Building C",
+        "weight_m": 9.92,
+        "via": "access_link"
+      }
+    ],
+    "J16": [
+      {
+        "to": "J9",
+        "weight_m": 34.89,
+        "via": "N16"
+      },
+      {
+        "to": "Hun Sen Building ( Building T )",
+        "weight_m": 16.62,
+        "via": "access_link"
+      },
+      {
+        "to": "Building C",
+        "weight_m": 9.38,
+        "via": "access_link"
+      }
+    ],
+    "J17": [
+      {
+        "to": "J18",
+        "weight_m": 71.47,
+        "via": "N17"
+      }
+    ],
+    "J18": [
+      {
+        "to": "J17",
+        "weight_m": 71.47,
+        "via": "N17"
+      },
+      {
+        "to": "Building A",
+        "weight_m": 8.34,
+        "via": "access_link"
+      }
+    ],
+    "Building A": [
+      {
+        "to": "J2",
+        "weight_m": 8.69,
+        "via": "access_link"
+      },
+      {
+        "to": "J3",
+        "weight_m": 8.09,
+        "via": "access_link"
+      },
+      {
+        "to": "J18",
+        "weight_m": 8.34,
+        "via": "access_link"
+      }
+    ],
+    "Building D": [
+      {
+        "to": "J5",
+        "weight_m": 15.25,
+        "via": "access_link"
+      },
+      {
+        "to": "J6",
+        "weight_m": 10.49,
+        "via": "access_link"
+      },
+      {
+        "to": "J7",
+        "weight_m": 23.43,
+        "via": "access_link"
+      },
+      {
+        "to": "J8",
+        "weight_m": 19.39,
+        "via": "access_link"
+      }
+    ],
+    "CKCC": [
+      {
+        "to": "J5",
+        "weight_m": 4.4,
+        "via": "access_link"
+      },
+      {
+        "to": "J7",
+        "weight_m": 7.36,
+        "via": "access_link"
+      }
+    ],
+    "NICC": [
+      {
+        "to": "J5",
+        "weight_m": 7.64,
+        "via": "access_link"
+      }
+    ],
+    "RUPP STEM Building": [
+      {
+        "to": "J6",
+        "weight_m": 15.47,
+        "via": "access_link"
+      },
+      {
+        "to": "J8",
+        "weight_m": 10.96,
+        "via": "access_link"
+      },
+      {
+        "to": "J10",
+        "weight_m": 8.34,
+        "via": "access_link"
+      },
+      {
+        "to": "J11",
+        "weight_m": 9.88,
+        "via": "access_link"
+      },
+      {
+        "to": "J12",
+        "weight_m": 14.05,
+        "via": "access_link"
+      }
+    ],
+    "Building B": [
+      {
+        "to": "J7",
+        "weight_m": 24.6,
+        "via": "access_link"
+      },
+      {
+        "to": "J8",
+        "weight_m": 5.35,
+        "via": "access_link"
+      },
+      {
+        "to": "J10",
+        "weight_m": 4.95,
+        "via": "access_link"
+      },
+      {
+        "to": "J11",
+        "weight_m": 4.69,
+        "via": "access_link"
+      }
+    ],
+    "RUPP Canteen": [
+      {
+        "to": "J9",
+        "weight_m": 8.14,
+        "via": "access_link"
+      }
+    ],
+    "RUPP Study Office": [
+      {
+        "to": "J12",
+        "weight_m": 6.15,
+        "via": "access_link"
+      }
+    ],
+    "Hun Sen Building ( Building T )": [
+      {
+        "to": "J14",
+        "weight_m": 9.78,
+        "via": "access_link"
+      },
+      {
+        "to": "J15",
+        "weight_m": 14.1,
+        "via": "access_link"
+      },
+      {
+        "to": "J16",
+        "weight_m": 16.62,
+        "via": "access_link"
+      }
+    ],
+    "Building C": [
+      {
+        "to": "J15",
+        "weight_m": 9.92,
+        "via": "access_link"
+      },
+      {
+        "to": "J16",
+        "weight_m": 9.38,
+        "via": "access_link"
+      }
+    ]
+  }
+}
