@@ -29,4 +29,17 @@
   - Pushed all to `hengXiaoHour/opencode-bootstrap` on GitHub
 - **Files changed**: global-instructions.md, export.js, test-loop/SKILL.md, + 7 new skill dirs
 - **Decisions**: Skills load on-demand via `skill` tool; global-instructions forces session-start at init; dev-workflow gates every feature; scaffold-guard prevents structural drift
-- **Pending**: Implement core data structures (Graph, Tree, Hash Table) for RUPP Campus Navigation
+### 2026-07-26 — Interactive Graph Editor + Navigator (Full Rewrite)
+- **Goal**: Replace hardcoded campus data with interactive graph builder. User clicks map to add nodes, connects them with edges, drags to reposition, and navigates.
+- **Done**:
+  - Removed all hardcoded buildings from `campus_data.py`
+  - Added CRUD methods to `Navigator` (add/remove/update node, add/remove edge)
+  - Added Haversine distance auto-calculation for edge weights
+  - Rewrote Flask backend with full REST API (nodes, edges, find_path, graph state)
+  - Rewrote frontend as interactive graph editor with 4 modes: Move, +Node, +Edge, Delete
+  - Added save/load graph state (server-side + file upload)
+  - Tree auto-organizes nodes by category
+  - 68 tests (60 backend + 8 Playwright UI) all passing
+- **Files changed**: `campus_data.py`, `navigator.py`, `app.py`, `index.html` (full rewrites), `test_navigator.py` (new), `test_ui.py` (new)
+- **Decisions**: No hardcoded data; user builds graph from scratch via map clicks; Haversine auto-distances; categories drive Tree hierarchy
+- **Pending**: Load sample RUPP campus graph as demo preset; add edge weight editing in UI

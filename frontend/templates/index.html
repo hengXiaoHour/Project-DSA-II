@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUPP Campus Navigation</title>
+    <title>Graph Editor + Navigator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -15,13 +17,12 @@
             padding: 10px 16px;
             overflow: hidden;
         }
-
         .toolbar {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: white;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             flex-shrink: 0;
@@ -30,30 +31,63 @@
         .toolbar .title {
             font-weight: 700;
             color: #1a365d;
-            font-size: 15px;
-            margin-right: 6px;
+            font-size: 14px;
+            margin-right: 8px;
         }
-        .toolbar label { font-size: 12px; font-weight: 600; color: #4a5568; }
-        .toolbar select {
-            padding: 6px 8px;
+        .mode-group { display: flex; gap: 2px; }
+        .mode-btn {
+            padding: 5px 10px;
             border: 2px solid #e2e8f0;
             border-radius: 6px;
-            font-size: 12px;
             background: #f7fafc;
-            min-width: 110px;
-            max-width: 160px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #4a5568;
         }
-        .toolbar select:focus { border-color: #4299e1; outline: none; }
+        .mode-btn:hover { border-color: #4299e1; background: #ebf8ff; }
+        .mode-btn.active { border-color: #4299e1; background: #4299e1; color: white; }
+        .mode-btn.danger.active { border-color: #e53e3e; background: #e53e3e; color: white; }
+        .mode-btn.danger:hover { border-color: #e53e3e; background: #fff5f5; }
+        .mode-btn.green.active { border-color: #38a169; background: #38a169; color: white; }
+        .mode-btn.green:hover { border-color: #38a169; background: #f0fff4; }
 
-        .radio-group { display: flex; gap: 3px; flex-wrap: wrap; }
+        .sep { width: 1px; height: 24px; background: #e2e8f0; margin: 0 6px; }
+
+        .nav-group { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+        .nav-group label { font-size: 11px; font-weight: 600; color: #4a5568; }
+        .nav-group select {
+            padding: 4px 6px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 11px;
+            background: #f7fafc;
+            min-width: 90px;
+        }
+        .nav-group select:focus { border-color: #4299e1; outline: none; }
+
+        .radio-group { display: flex; gap: 2px; }
         .radio-group label {
             display: flex; align-items: center; gap: 2px;
-            font-size: 11px; font-weight: 500; cursor: pointer;
-            padding: 5px 10px; border: 2px solid #e2e8f0; border-radius: 6px;
+            font-size: 10px; font-weight: 500; cursor: pointer;
+            padding: 3px 8px; border: 2px solid #e2e8f0; border-radius: 6px;
             transition: all 0.15s;
         }
         .radio-group label:hover { border-color: #4299e1; background: #ebf8ff; }
         .radio-group label:has(input:checked) { border-color: #4299e1; background: #ebf8ff; }
+
+        .btn {
+            background: #4299e1; color: white; border: none;
+            padding: 5px 12px; border-radius: 6px;
+            font-size: 11px; font-weight: 600; cursor: pointer;
+            transition: background 0.15s; white-space: nowrap;
+        }
+        .btn:hover { background: #3182ce; }
+        .btn.green { background: #38a169; }
+        .btn.green:hover { background: #2f855a; }
+        .btn.orange { background: #d69e2e; }
+        .btn.orange:hover { background: #b7791f; }
 
         .main-area {
             display: flex;
@@ -62,298 +96,495 @@
             min-height: 0;
             margin-top: 10px;
         }
-
-        .canvas-wrapper {
+        .map-wrapper {
             flex: 1;
             background: white;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            padding: 12px;
+            padding: 6px;
             display: flex;
             flex-direction: column;
             position: relative;
             min-height: 0;
         }
-        .canvas-container {
+        .map-container {
             flex: 1;
             position: relative;
             min-height: 0;
+            border-radius: 6px;
+            overflow: hidden;
         }
-        .canvas-container canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+        .map-container #map { width: 100%; height: 100%; }
 
         .result-bar {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            right: 8px;
+            top: 12px;
+            left: 12px;
+            right: 12px;
             background: rgba(255,255,255,0.95);
-            padding: 8px 14px;
+            padding: 6px 12px;
             border-radius: 8px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-            z-index: 10;
+            z-index: 1000;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             pointer-events: none;
-            font-size: 12px;
+            font-size: 11px;
         }
         .result-bar .algo-badge {
             background: #4299e1; color: white;
             padding: 2px 8px; border-radius: 4px;
-            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+            font-size: 10px; font-weight: 700;
         }
-        .result-bar .path-text {
-            font-weight: 600; color: #2b6cb0;
-            flex: 1; min-width: 120px; font-size: 12px;
-        }
-        .result-bar .cost-text {
-            font-weight: 700; color: #38a169; white-space: nowrap; font-size: 12px;
-        }
-        .result-bar .error-text { color: #e53e3e; font-weight: 600; font-size: 12px; }
-        .result-bar.placeholder {
-            background: rgba(255,255,255,0.7); box-shadow: none;
-            border: 1px dashed #cbd5e0;
-        }
-        .result-bar.placeholder .path-text { color: #a0aec0; font-weight: 400; }
+        .result-bar .path-text { font-weight: 600; color: #2b6cb0; flex: 1; font-size: 11px; }
+        .result-bar .cost-text { font-weight: 700; color: #38a169; white-space: nowrap; font-size: 11px; }
+        .result-bar .error-text { color: #e53e3e; font-weight: 600; font-size: 11px; }
 
-        .legend {
-            display: flex; gap: 12px; flex-shrink: 0;
-            padding-top: 8px; font-size: 11px; flex-wrap: wrap;
+        .hint-bar {
+            font-size: 10px; color: #718096; text-align: center;
+            padding: 4px; flex-shrink: 0; font-style: italic;
         }
-        .legend-item { display: flex; align-items: center; gap: 4px; }
-        .legend-color { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
 
         .right-panel {
-            width: 220px;
+            width: 200px;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
         .info-card {
-            background: white; border-radius: 10px; padding: 12px;
+            background: white; border-radius: 10px; padding: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             flex: 1; overflow-y: auto; min-height: 0;
         }
         .info-card h3 {
-            font-size: 12px; font-weight: 700; color: #2d3748;
-            margin-bottom: 8px; padding-bottom: 4px;
+            font-size: 11px; font-weight: 700; color: #2d3748;
+            margin-bottom: 6px; padding-bottom: 3px;
             border-bottom: 2px solid #e2e8f0;
         }
-        .building-row {
-            display: flex; justify-content: space-between;
-            padding: 3px 0; font-size: 11px; color: #4a5568;
+        .node-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 2px 0; font-size: 10px; color: #4a5568;
             border-bottom: 1px solid #f7fafc;
         }
-        .building-row .connections { color: #a0aec0; font-size: 10px; }
+        .node-row .node-name { font-weight: 600; }
+        .node-row .node-cat { color: #a0aec0; font-size: 9px; }
+        .node-row .del-btn {
+            background: none; border: 1px solid #e2e8f0; border-radius: 4px;
+            cursor: pointer; font-size: 9px; color: #e53e3e; padding: 0 4px;
+            line-height: 16px;
+        }
+        .node-row .del-btn:hover { background: #fff5f5; }
+
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #38a169; color: white;
+            padding: 8px 18px; border-radius: 8px;
+            font-size: 12px; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: opacity 0.3s; opacity: 0;
+            pointer-events: none; z-index: 10000;
+        }
+        .toast.show { opacity: 1; }
+        .toast.error { background: #e53e3e; }
+
+        .node-label {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: white !important;
+            font-size: 9px !important;
+            font-weight: 700 !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7) !important;
+        }
+        .edge-label {
+            background: rgba(255,255,255,0.85) !important;
+            border: none !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
+            font-size: 9px !important;
+            font-weight: 600 !important;
+            color: #2d3748 !important;
+            padding: 2px 6px !important;
+            border-radius: 4px !important;
+        }
 
         @media (max-width: 768px) {
             body { overflow-y: auto; height: auto; padding: 8px; }
-            .toolbar {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 6px;
-            }
-            .toolbar .title { text-align: center; margin-right: 0; }
-            .toolbar .field-row {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-            }
-            .toolbar .field-row label { min-width: 30px; }
-            .toolbar .field-row select { flex: 1; min-width: 0; max-width: none; }
-            .radio-group { justify-content: center; }
-
-            .main-area {
-                flex-direction: column;
-                min-height: 400px;
-            }
-            .right-panel {
-                width: 100%;
-                flex-direction: row;
-            }
+            .toolbar { flex-direction: column; align-items: stretch; gap: 4px; }
+            .main-area { flex-direction: column; min-height: 350px; }
+            .right-panel { width: 100%; flex-direction: row; }
             .right-panel .info-card { flex: 1; }
-        }
-
-        @media (max-width: 480px) {
-            .right-panel { flex-direction: column; }
-            .result-bar .path-text { min-width: 80px; font-size: 11px; }
         }
     </style>
 </head>
 <body>
-    <div class="toolbar" id="toolbar">
-        <span class="title">RUPP Campus Navigation</span>
-        <div class="field-row">
+    <div class="toolbar">
+        <span class="title">Graph Editor</span>
+        <div class="mode-group">
+            <button class="mode-btn" data-mode="select" onclick="setMode('select')">Move</button>
+            <button class="mode-btn green" data-mode="add-node" onclick="setMode('add-node')">+Node</button>
+            <button class="mode-btn green" data-mode="add-edge" onclick="setMode('add-edge')">+Edge</button>
+            <button class="mode-btn danger" data-mode="delete" onclick="setMode('delete')">Delete</button>
+        </div>
+        <div class="sep"></div>
+        <div class="nav-group" id="navGroup">
             <label>From</label>
-            <select id="start"></select>
-        </div>
-        <div class="field-row">
+            <select id="startSelect"></select>
             <label>To</label>
-            <select id="end"></select>
+            <select id="endSelect"></select>
+            <div class="radio-group">
+                <label><input type="radio" name="algo" value="bfs"> BFS</label>
+                <label><input type="radio" name="algo" value="dfs"> DFS</label>
+                <label><input type="radio" name="algo" value="dijkstra" checked> Dijkstra</label>
+            </div>
+            <button class="btn" onclick="findPath()">Go</button>
         </div>
-        <div class="radio-group">
-            <label><input type="radio" name="algo" value="bfs"> BFS</label>
-            <label><input type="radio" name="algo" value="dfs"> DFS</label>
-            <label><input type="radio" name="algo" value="dijkstra" checked> Dijkstra</label>
-        </div>
-        
+        <div class="sep"></div>
+        <button class="btn orange" onclick="clearGraph()">Clear</button>
+        <button class="btn green" onclick="saveGraph()">Save</button>
+        <button class="btn orange" onclick="loadSample()">Sample</button>
+        <button class="btn" onclick="document.getElementById('loadInput').click()">Load</button>
+        <input type="file" id="loadInput" accept=".json" style="display:none" onchange="loadGraph(event)">
     </div>
 
     <div class="main-area">
-        <div class="canvas-wrapper">
-            <div class="canvas-container">
+        <div class="map-wrapper">
+            <div class="map-container">
                 <div class="result-bar" id="resultBar">
-                    <span class="algo-badge">...</span>
-                    <span class="path-text">Loading...</span>
+                    <span class="algo-badge">Info</span>
+                    <span class="path-text">Click to add nodes, then connect them</span>
                 </div>
-                <canvas id="graphCanvas" width="650" height="480"></canvas>
+                <div id="map"></div>
             </div>
-            <div class="legend">
-                <span class="legend-item"><span class="legend-color" style="background:#4299e1;"></span> Node</span>
-                <span class="legend-item"><span class="legend-color" style="background:#38a169;"></span> Start</span>
-                <span class="legend-item"><span class="legend-color" style="background:#e53e3e;"></span> End</span>
-                <span class="legend-item"><span class="legend-color" style="background:#d69e2e;"></span> Path</span>
-                <span class="legend-item"><span class="legend-color" style="background:#a0aec0;"></span> Edge</span>
-            </div>
+            <div class="hint-bar" id="hintBar">Mode: <strong>Move</strong> — drag nodes around</div>
         </div>
-
         <div class="right-panel">
             <div class="info-card">
-                <h3>Buildings</h3>
-                <div id="buildingList"></div>
+                <h3>Nodes <span id="nodeCount" style="font-weight:400;color:#a0aec0;">(0)</span></h3>
+                <div id="nodeList"></div>
             </div>
-            <div class="info-card">
-                <h3>Campus Tree</h3>
-                <div class="hierarchy">RUPP Campus 1</div>
+            <div class="info-card" style="flex:0.6;">
+                <h3>Tree</h3>
+                <div id="treeDisplay" style="font-size:10px;color:#4a5568;font-family:monospace;">Empty</div>
             </div>
         </div>
     </div>
 
-    <script>
-        const buildings = {{ buildings | tojson }};
-        const edges = {{ edges | tojson }};
+    <div id="nodeForm" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:24px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.3);z-index:10001;width:300px;">
+        <h3 style="font-size:14px;margin-bottom:10px;color:#2d3748;">Add Node</h3>
+        <input type="text" id="nodeNameInput" placeholder="Enter node name"
+            style="width:100%;padding:8px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:13px;outline:none;"
+            onkeydown="if(event.key==='Enter')confirmAddNode()">
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
+            <button onclick="cancelAddNode()"
+                style="padding:6px 14px;border:2px solid #e2e8f0;border-radius:6px;background:white;font-size:12px;font-weight:600;cursor:pointer;">Cancel</button>
+            <button onclick="confirmAddNode()" class="btn">Add</button>
+        </div>
+    </div>
 
-        const positions = {
-            "Entrance": { x: 100, y: 420 },
-            "Building A": { x: 200, y: 350 },
-            "Library": { x: 200, y: 160 },
-            "NICC/CKCC": { x: 200, y: 70 },
-            "Building D": { x: 350, y: 120 },
-            "Building Stem": { x: 400, y: 240 },
-            "Building B": { x: 320, y: 360 },
-            "Study Office": { x: 500, y: 290 },
-            "Building C": { x: 500, y: 140 },
-            "Building T": { x: 580, y: 80 },
-            "Canteen": { x: 500, y: 400 }
-        };
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let map, markers = {}, edgeLines = [], pathLine = null;
+        let mode = 'select';
+        let edgeSource = null;
+        let pendingLat = null, pendingLng = null;
+        let allNodes = {}, allEdges = [];
 
         function init() {
-            const start = document.getElementById('start');
-            const end = document.getElementById('end');
-            buildings.forEach(b => {
-                start.innerHTML += `<option value="${b}">${b}</option>`;
-                end.innerHTML += `<option value="${b}">${b}</option>`;
-            });
-            start.value = "Building A";
-            end.value = "Entrance";
-
-            const list = document.getElementById('buildingList');
-            buildings.forEach(b => {
-                const conns = edges.filter(e => e[0] === b || e[1] === b);
-                list.innerHTML += `<div class="building-row"><span>${b}</span><span class="connections">${conns.length} connections</span></div>`;
+            map = L.map('map', {
+                center: [11.5625, 104.8913],
+                zoom: 17,
+                zoomControl: false,
+                attributionControl: false
             });
 
-            start.addEventListener('change', findPath);
-            end.addEventListener('change', findPath);
-            document.querySelectorAll('input[name="algo"]').forEach(r => {
-                r.addEventListener('change', findPath);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') cancelAddNode();
+            });
+            map.on('click', function(e) {
+                if (mode === 'add-node') {
+                    pendingLat = e.latlng.lat;
+                    pendingLng = e.latlng.lng;
+                    document.getElementById('nodeForm').style.display = 'block';
+                    document.getElementById('nodeNameInput').value = '';
+                    setTimeout(() => document.getElementById('nodeNameInput').focus(), 100);
+                } else if (mode === 'add-edge') {
+                    showToast('Click a node first, then another node', '#d69e2e');
+                }
             });
 
-            findPath();
+            loadGraphFromApi();
+            setTimeout(() => map.invalidateSize(), 200);
         }
 
-        function drawGraph(highlightPath = null, startNode = null, endNode = null) {
-            const canvas = document.getElementById('graphCanvas');
-            const container = canvas.parentElement;
-            const dpr = window.devicePixelRatio || 1;
-            const w = container.clientWidth;
-            const h = container.clientHeight;
-            canvas.width = w * dpr;
-            canvas.height = h * dpr;
-            canvas.style.width = w + 'px';
-            canvas.style.height = h + 'px';
-            const ctx = canvas.getContext('2d');
-            ctx.scale(dpr, dpr);
-            ctx.clearRect(0, 0, w, h);
+        function setMode(newMode) {
+            mode = newMode;
+            edgeSource = null;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.querySelector(`.mode-btn[data-mode="${newMode}"]`);
+            if (btn) btn.classList.add('active');
 
-            const scaleX = w / 650;
-            const scaleY = h / 480;
-            const scale = Math.min(scaleX, scaleY) * 0.85;
-            const offsetX = (w - 650 * scale) / 2;
-            const offsetY = (h - 480 * scale) / 2;
+            const hints = {
+                'select': 'Mode: <strong>Move</strong> — drag nodes around',
+                'add-node': 'Mode: <strong>+Node</strong> — click anywhere on the map to add a node',
+                'add-edge': 'Mode: <strong>+Edge</strong> — click a node (source), then click another (target)',
+                'delete': 'Mode: <strong>Delete</strong> — click a node or edge to remove it'
+            };
+            document.getElementById('hintBar').innerHTML = hints[newMode] || '';
 
-            const pathSet = new Set();
-            if (highlightPath) {
-                for (let i = 0; i < highlightPath.length - 1; i++) {
-                    pathSet.add([highlightPath[i], highlightPath[i+1]].sort().join('||'));
+            for (const [name, m] of Object.entries(markers)) {
+                if (mode === 'select') {
+                    m.dragging.enable();
+                } else {
+                    m.dragging.disable();
+                }
+            }
+        }
+
+        function addNodeApi(name, lat, lng) {
+            fetch('/api/nodes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, lat, lng })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showToast(data.error, '#e53e3e'); return; }
+                showToast(`Added: ${name}`);
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error adding node', '#e53e3e'));
+        }
+
+        function deleteNodeApi(name) {
+            fetch(`/api/nodes/${encodeURIComponent(name)}`, { method: 'DELETE' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showToast(data.error, '#e53e3e'); return; }
+                showToast(`Deleted: ${name}`);
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error deleting node', '#e53e3e'));
+        }
+
+        function addEdgeApi(from, to) {
+            fetch('/api/edges', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ from, to })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showToast(data.error, '#e53e3e'); return; }
+                showToast(`Edge: ${from} ↔ ${to}`);
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error adding edge', '#e53e3e'));
+        }
+
+        function deleteEdgeApi(from, to) {
+            fetch('/api/edges', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ from, to })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showToast(data.error, '#e53e3e'); return; }
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error deleting edge', '#e53e3e'));
+        }
+
+        function loadGraphFromApi() {
+            fetch('/api/graph')
+            .then(r => r.json())
+            .then(state => {
+                allNodes = state.nodes || {};
+                allEdges = state.edges || [];
+                renderGraph();
+                renderSidebar();
+                renderTree();
+            })
+            .catch(() => {});
+        }
+
+        function renderGraph() {
+            if (!map) return;
+
+            edgeLines.forEach(l => { try { map.removeLayer(l); } catch(e) {} });
+            edgeLines = [];
+            if (pathLine) { map.removeLayer(pathLine); pathLine = null; }
+
+            for (const [name, data] of Object.entries(allNodes)) {
+                if (markers[name]) {
+                    markers[name].setLatLng([data.lat, data.lng]);
+                } else {
+                    createMarker(name, data);
+                }
+            }
+            for (const name of Object.keys(markers)) {
+                if (!allNodes[name]) {
+                    map.removeLayer(markers[name]);
+                    delete markers[name];
                 }
             }
 
-            for (const [a, b, wgt] of edges) {
-                const p1 = positions[a], p2 = positions[b];
-                if (!p1 || !p2) continue;
-                const sx = p1.x * scale + offsetX, sy = p1.y * scale + offsetY;
-                const ex = p2.x * scale + offsetX, ey = p2.y * scale + offsetY;
-                const isPath = pathSet.has([a, b].sort().join('||'));
-                ctx.beginPath();
-                ctx.moveTo(sx, sy);
-                ctx.lineTo(ex, ey);
-                ctx.strokeStyle = isPath ? '#d69e2e' : '#a0aec0';
-                ctx.lineWidth = isPath ? 4 : 2;
-                ctx.stroke();
-
-                const mx = (sx + ex) / 2 + 6;
-                const my = (sy + ey) / 2 - 4;
-                ctx.fillStyle = '#4a5568';
-                ctx.font = `${11 * scale}px Arial`;
-                ctx.fillText(wgt + 'm', mx, my);
+            for (const e of allEdges) {
+                const a = allNodes[e.from], b = allNodes[e.to];
+                if (!a || !b) continue;
+                const line = L.polyline([[a.lat, a.lng], [b.lat, b.lng]], {
+                    color: '#a0aec0', weight: 2, opacity: 0.8
+                }).addTo(map);
+                line._from = e.from;
+                line._to = e.to;
+                line.bindTooltip(e.weight + 'm', { permanent: true, direction: 'center', className: 'edge-label' });
+                line.on('click', function() {
+                    if (mode === 'delete') {
+                        if (confirm(`Delete edge ${e.from} ↔ ${e.to}?`)) {
+                            deleteEdgeApi(e.from, e.to);
+                        }
+                    }
+                });
+                edgeLines.push(line);
             }
 
-            const r = 20 * scale;
-            for (const [name, pos] of Object.entries(positions)) {
-                const cx = pos.x * scale + offsetX, cy = pos.y * scale + offsetY;
-                ctx.beginPath();
-                ctx.arc(cx, cy, r, 0, Math.PI * 2);
-                if (name === startNode) ctx.fillStyle = '#38a169';
-                else if (name === endNode) ctx.fillStyle = '#e53e3e';
-                else if (highlightPath && highlightPath.includes(name)) ctx.fillStyle = '#d69e2e';
-                else ctx.fillStyle = '#4299e1';
-                ctx.fill();
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 2;
-                ctx.stroke();
+            updateSelects();
+        }
 
-                ctx.fillStyle = 'white';
-                ctx.font = `bold ${10 * scale}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(name.replace('Building ', 'B.'), cx, cy);
+        function makePinIcon(color) {
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="42" viewBox="0 0 28 42">'
+                + '<ellipse cx="14" cy="39" rx="8" ry="3" fill="rgba(0,0,0,0.15)"/>'
+                + '<path d="M14 2C7.4 2 2 7.4 2 14c0 7.5 12 24 12 24s12-16.5 12-24C26 7.4 20.6 2 14 2z" fill="' + color + '" stroke="white" stroke-width="2.5"/>'
+                + '<circle cx="14" cy="13" r="5" fill="white"/>'
+                + '</svg>';
+            return L.divIcon({
+                className: '',
+                html: svg,
+                iconSize: [28, 42],
+                iconAnchor: [14, 40],
+                tooltipAnchor: [0, -44],
+            });
+        }
+
+        function createMarker(name, data) {
+            const m = L.marker([data.lat, data.lng], {
+                icon: makePinIcon('#4299e1'),
+                draggable: true,
+            }).addTo(map);
+
+            m.bindTooltip(name, {
+                permanent: true, direction: 'top', offset: [0, -16], className: 'node-label'
+            });
+
+            m._nodeName = name;
+            m.on('click', function() {
+                if (mode === 'delete') {
+                    if (confirm(`Delete node "${name}"?`)) {
+                        deleteNodeApi(name);
+                    }
+                } else if (mode === 'add-edge') {
+                    if (!edgeSource) {
+                        edgeSource = name;
+                        this.setIcon(makePinIcon('#d69e2e'));
+                        showToast(`Source: ${name} — now click the target node`, '#d69e2e');
+                    } else if (edgeSource === name) {
+                        edgeSource = null;
+                        loadGraphFromApi();
+                        showToast('Cancelled');
+                    } else {
+                        addEdgeApi(edgeSource, name);
+                        edgeSource = null;
+                        loadGraphFromApi();
+                    }
+                } else if (mode === 'add-node') {
+                    showToast('Click empty area on the map', '#d69e2e');
+                }
+            });
+
+            m.on('dragend', function(e) {
+                const pos = e.target.getLatLng();
+                fetch(`/api/nodes/${encodeURIComponent(name)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: pos.lat, lng: pos.lng })
+                })
+                .then(r => r.json())
+                .then(() => loadGraphFromApi())
+                .catch(() => {});
+            });
+
+            markers[name] = m;
+            return m;
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('nodeList');
+            const names = Object.keys(allNodes).sort();
+            document.getElementById('nodeCount').textContent = `(${names.length})`;
+            list.innerHTML = names.map(n => {
+                const d = allNodes[n];
+                const cat = d.category || 'Uncategorized';
+                return `<div class="node-row">
+                    <span><span class="node-name">${n}</span> <span class="node-cat">${cat}</span></span>
+                    <button class="del-btn" onclick="deleteNodeApi('${n}')">✕</button>
+                </div>`;
+            }).join('');
+        }
+
+        function renderTree() {
+            const cats = {};
+            for (const [name, data] of Object.entries(allNodes)) {
+                const cat = data.category || 'Uncategorized';
+                if (!cats[cat]) cats[cat] = [];
+                cats[cat].push(name);
+            }
+            const div = document.getElementById('treeDisplay');
+            const keys = Object.keys(cats).sort();
+            if (keys.length === 0) {
+                div.textContent = 'Empty';
+                return;
+            }
+            div.innerHTML = 'My Campus\n' + keys.map(c => {
+                return '└── ' + c + '\n' + cats[c].sort().map(n => '    ├── ' + n).join('\n');
+            }).join('\n');
+        }
+
+        function updateSelects() {
+            const startSel = document.getElementById('startSelect');
+            const endSel = document.getElementById('endSelect');
+            const names = Object.keys(allNodes).sort();
+            const sv = startSel.value, ev = endSel.value;
+            startSel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+            endSel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+            if (names.length > 0) {
+                if (names.includes(sv)) startSel.value = sv;
+                else if (names.length > 0) startSel.value = names[0];
+                if (names.includes(ev)) endSel.value = ev;
+                else if (names.length > 1) endSel.value = names[1];
+                else if (names.length > 0) endSel.value = names[0];
             }
         }
 
         function findPath() {
-            const start = document.getElementById('start').value;
-            const end = document.getElementById('end').value;
+            const start = document.getElementById('startSelect').value;
+            const end = document.getElementById('endSelect').value;
             const algo = document.querySelector('input[name="algo"]:checked').value;
             const bar = document.getElementById('resultBar');
-            bar.className = 'result-bar';
-            bar.innerHTML = '<span class="algo-badge">...</span><span class="path-text">Calculating...</span>';
+
+            if (!start || !end) {
+                bar.innerHTML = '<span class="algo-badge">!</span><span class="error-text">Add at least 2 nodes first</span>';
+                return;
+            }
 
             fetch('/api/find_path', {
                 method: 'POST',
@@ -362,28 +593,153 @@
             })
             .then(r => r.json())
             .then(data => {
-                if (data.path) {
+                if (data.path && data.path.length > 0) {
                     bar.innerHTML = `
-                        <span class="algo-badge">${data.algorithm.toUpperCase()}</span>
-                        <span class="path-text">${data.path.join(' -> ')}</span>
+                        <span class="algo-badge">${(data.algorithm || algo).toUpperCase()}</span>
+                        <span class="path-text">${data.path.join(' → ')}</span>
                         <span class="cost-text">${data.cost}m</span>`;
-                    drawGraph(data.path, start, end);
+                    highlightPath(data.path);
+                    highlightPathNodes(data.path, start, end);
                 } else {
-                    bar.innerHTML = `
-                        <span class="algo-badge">${algo.toUpperCase()}</span>
-                        <span class="error-text">No path found between ${start} and ${end}</span>`;
-                    drawGraph(null, start, end);
+                    bar.innerHTML = `<span class="algo-badge">${algo.toUpperCase()}</span><span class="error-text">No path found</span>`;
+                    clearHighlights();
                 }
             })
-            .catch(err => {
-                bar.innerHTML = `<span class="algo-badge">ERR</span><span class="error-text">${err.message}</span>`;
+            .catch(() => {
+                bar.innerHTML = '<span class="algo-badge">ERR</span><span class="error-text">Server error</span>';
+            });
+        }
+
+        function highlightPath(path) {
+            if (pathLine) { map.removeLayer(pathLine); pathLine = null; }
+            if (!path || path.length < 2) return;
+            const coords = [];
+            for (const name of path) {
+                const d = allNodes[name];
+                if (d) coords.push([d.lat, d.lng]);
+            }
+            pathLine = L.polyline(coords, { color: '#d69e2e', weight: 5, opacity: 0.9 }).addTo(map);
+        }
+
+        function highlightPathNodes(path, start, end) {
+            for (const [name, m] of Object.entries(markers)) {
+                let color = '#4299e1';
+                if (name === start) color = '#38a169';
+                else if (name === end) color = '#e53e3e';
+                else if (path && path.includes(name)) color = '#d69e2e';
+                m.setIcon(makePinIcon(color));
+            }
+        }
+
+        function clearHighlights() {
+            for (const m of Object.values(markers)) {
+                m.setIcon(makePinIcon('#4299e1'));
+            }
+            if (pathLine) { map.removeLayer(pathLine); pathLine = null; }
+        }
+
+        function clearGraph() {
+            if (!confirm('Delete ALL nodes and edges? This cannot be undone.')) return;
+            fetch('/api/graph', { method: 'GET' })
+            .then(r => r.json())
+            .then(state => {
+                const names = Object.keys(state.nodes || {});
+                const promises = names.map(n =>
+                    fetch(`/api/nodes/${encodeURIComponent(n)}`, { method: 'DELETE' })
+                );
+                return Promise.all(promises);
             })
-            .finally(() => {});
+            .then(() => {
+                showToast('Graph cleared');
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error clearing graph', '#e53e3e'));
+        }
+
+        function saveGraph() {
+            fetch('/api/graph/save', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                showToast(`Saved to server`);
+            })
+            .catch(() => showToast('Error saving', '#e53e3e'));
+        }
+
+        function loadGraph(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const state = JSON.parse(e.target.result);
+                    fetch('/api/graph/load', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(state)
+                    })
+                    .then(r => r.json())
+                    .then(() => {
+                        showToast('Graph loaded');
+                        loadGraphFromApi();
+                    })
+                    .catch(() => showToast('Error loading', '#e53e3e'));
+                } catch(err) {
+                    showToast('Invalid JSON file', '#e53e3e');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function loadSample() {
+            if (Object.keys(allNodes).length > 0 && !confirm('Replace current graph with sample campus?')) return;
+            fetch('/api/graph/sample')
+            .then(r => r.json())
+            .then(state => {
+                if (state.error) { showToast(state.error, '#e53e3e'); return; }
+                fetch('/api/graph/load', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(state)
+                })
+                .then(r => r.json())
+                .then(() => {
+                    showToast('RUPP Campus loaded!');
+                    loadGraphFromApi();
+                });
+            })
+            .catch(() => showToast('Error loading sample', '#e53e3e'));
+        }
+
+        function showToast(msg, bg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.background = bg || '#38a169';
+            t.classList.remove('show');
+            void t.offsetWidth;
+            t.classList.add('show');
+            clearTimeout(t._timeout);
+            t._timeout = setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function confirmAddNode() {
+            const name = document.getElementById('nodeNameInput').value.trim();
+            if (name && pendingLat !== null && pendingLng !== null) {
+                addNodeApi(name, pendingLat, pendingLng);
+            } else {
+                showToast('Enter a name', '#e53e3e');
+                return;
+            }
+            document.getElementById('nodeForm').style.display = 'none';
+            pendingLat = pendingLng = null;
+        }
+
+        function cancelAddNode() {
+            document.getElementById('nodeForm').style.display = 'none';
+            pendingLat = pendingLng = null;
         }
 
         init();
-        drawGraph();
-        window.addEventListener('resize', () => drawGraph());
     </script>
 </body>
 </html>
