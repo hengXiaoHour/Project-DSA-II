@@ -795,9 +795,23 @@
             if (pathLine) { map.removeLayer(pathLine); pathLine = null; }
             if (!path || path.length < 2) return;
             const coords = [];
-            for (const name of path) {
+            for (let i = 0; i < path.length; i++) {
+                const name = path[i];
                 const d = allNodes[name];
-                if (d) coords.push([d.lat, d.lng]);
+                if (!d) continue;
+                coords.push([d.lat, d.lng]);
+                if (i < path.length - 1) {
+                    const next = path[i + 1];
+                    const edge = allEdges.find(e =>
+                        (e.from === name && e.to === next) || (e.from === next && e.to === name)
+                    );
+                    if (edge && edge.path && edge.path.length > 0) {
+                        const pts = (edge.from === name && edge.to === next)
+                            ? edge.path
+                            : [...edge.path].reverse();
+                        for (const p of pts) coords.push([p[0], p[1]]);
+                    }
+                }
             }
             pathLine = L.polyline(coords, { color: '#d69e2e', weight: 5, opacity: 0.9 }).addTo(map);
         }

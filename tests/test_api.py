@@ -14,8 +14,9 @@ def reset_state():
 
 
 @pytest.fixture
-def client():
+def client(tmp_path):
     app.config["TESTING"] = True
+    app.config["STATE_FILE"] = str(tmp_path / "test_state.json")
     with app.test_client() as c:
         c.post("/api/graph/load", json={"nodes": {}, "edges": []})
         yield c

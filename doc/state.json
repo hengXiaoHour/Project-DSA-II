@@ -2,8 +2,8 @@
   "nodes": {
     "Building A": {
       "category": "Academic",
-      "lat": 11.5682747128093,
-      "lng": 104.89085197448732
+      "lat": 11.568361711145743,
+      "lng": 104.89156007766725
     },
     "Building B": {
       "category": "Academic",
@@ -22,8 +22,8 @@
     },
     "Building Stem": {
       "category": "Academic",
-      "lat": 11.56933383055939,
-      "lng": 104.88959670066835
+      "lat": 11.569362743433832,
+      "lng": 104.88977909088136
     },
     "Building T": {
       "category": "Academic",
@@ -47,8 +47,8 @@
     },
     "Library": {
       "category": "Service",
-      "lat": 11.568140918071885,
-      "lng": 104.88975763320924
+      "lat": 11.568114544604855,
+      "lng": 104.88957524299622
     },
     "NICC": {
       "category": "Service",
@@ -71,16 +71,6 @@
       "from": "Study Office",
       "to": "Canteen",
       "weight": 62.2
-    },
-    {
-      "from": "Building B",
-      "to": "Building Stem",
-      "weight": 50.6
-    },
-    {
-      "from": "Building D",
-      "to": "Building Stem",
-      "weight": 49.0
     },
     {
       "from": "Building D",
@@ -118,11 +108,6 @@
           104.89155739545824
         ]
       ]
-    },
-    {
-      "from": "Building Stem",
-      "to": "Library",
-      "weight": 133.8
     },
     {
       "from": "Canteen",
@@ -178,6 +163,63 @@
         [
           11.568363270139491,
           104.8915520310402
+        ]
+      ]
+    },
+    {
+      "from": "Building B",
+      "to": "Building Stem",
+      "weight": 53.6,
+      "path": [
+        [
+          11.569345982231287,
+          104.88959670066835
+        ]
+      ]
+    },
+    {
+      "from": "Building D",
+      "to": "Building B",
+      "weight": 71.2,
+      "path": [
+        [
+          11.569332823603386,
+          104.88959401845935
+        ]
+      ]
+    },
+    {
+      "from": "Building D",
+      "to": "Building Stem",
+      "weight": 69.1
+    },
+    {
+      "from": "Building A",
+      "to": "Building Stem",
+      "weight": 168.2,
+      "path": [
+        [
+          11.56813831047357,
+          104.88975763320924
+        ],
+        [
+          11.569343643365453,
+          104.88958597183229
+        ]
+      ]
+    },
+    {
+      "from": "Building Stem",
+      "to": "Library",
+      "weight": 140.6,
+      "path": [
+        [
+          11.56933311646311,
+          104.88959670066835
+        ],
+        [
+          11.568133046999783,
+          104.8897522687912
         ]
       ]
     }
