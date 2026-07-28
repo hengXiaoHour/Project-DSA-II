@@ -201,7 +201,7 @@ def find_path():
     end = data.get("end")
     path, cost = nav.shortest_path(start, end)
     if path:
-        return jsonify({"path": path, "cost": cost, "algorithm": "dijkstra"})
+        return jsonify({"path": path, "cost": round(cost), "algorithm": "dijkstra"})
     return jsonify({"path": None, "cost": None, "algorithm": "dijkstra", "error": "No path found"}), 404
 
 

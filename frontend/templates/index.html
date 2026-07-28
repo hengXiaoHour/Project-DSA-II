@@ -887,10 +887,12 @@
             .then(r => r.json())
             .then(data => {
                 if (data.path && data.path.length > 0) {
+                    const displayPath = data.path.filter(n => allNodes[n]);
+                    const dist = Math.round(data.cost);
                     bar.innerHTML = `
                         <span class="algo-badge">DIJKSTRA</span>
-                        <span class="path-text">${data.path.join(' → ')}</span>
-                        <span class="cost-text">${data.cost}m</span>`;
+                        <span class="path-text">${displayPath.join(' → ')}</span>
+                        <span class="cost-text">${dist}m</span>`;
                     highlightPath(data.path);
                     highlightPathNodes(data.path, start, end);
                 } else {
