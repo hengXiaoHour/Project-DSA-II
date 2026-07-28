@@ -837,7 +837,8 @@
             .then(adj => {
                 let html = `<span style="font-size:10px;color:#718096;display:block;margin-bottom:4px;">${names.length} buildings, ${Object.keys(jcts).length} junctions</span>`;
                 for (const n of names) {
-                    const edges = (adj[n] || []).sort((a, b) => a.to.localeCompare(b.to));
+                    const raw = adj[n] || [];
+                    const edges = raw.map(([to, weight]) => ({to, weight})).sort((a, b) => a.to.localeCompare(b.to));
                     if (edges.length === 0) {
                         html += `<div class="adj-item"><span class="vtx">${n}</span></div>`;
                         continue;
