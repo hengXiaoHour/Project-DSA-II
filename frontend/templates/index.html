@@ -34,7 +34,7 @@
             font-size: 14px;
             margin-right: 8px;
         }
-        .mode-group { display: flex; gap: 2px; }
+        .mode-group { display: flex; gap: 2px; flex-wrap: wrap; }
         .mode-btn {
             padding: 5px 10px;
             border: 2px solid #e2e8f0;
@@ -54,6 +54,8 @@
         .mode-btn.green:hover { border-color: #38a169; background: #f0fff4; }
         .mode-btn.orange.active { border-color: #d69e2e; background: #d69e2e; color: white; }
         .mode-btn.orange:hover { border-color: #d69e2e; background: #fffff0; }
+        .mode-btn.purple.active { border-color: #805ad5; background: #805ad5; color: white; }
+        .mode-btn.purple:hover { border-color: #805ad5; background: #faf5ff; }
 
         .sep { width: 1px; height: 24px; background: #e2e8f0; margin: 0 6px; }
 
@@ -68,16 +70,6 @@
             min-width: 90px;
         }
         .nav-group select:focus { border-color: #4299e1; outline: none; }
-
-        .radio-group { display: flex; gap: 2px; }
-        .radio-group label {
-            display: flex; align-items: center; gap: 2px;
-            font-size: 10px; font-weight: 500; cursor: pointer;
-            padding: 3px 8px; border: 2px solid #e2e8f0; border-radius: 6px;
-            transition: all 0.15s;
-        }
-        .radio-group label:hover { border-color: #4299e1; background: #ebf8ff; }
-        .radio-group label:has(input:checked) { border-color: #4299e1; background: #ebf8ff; }
 
         .btn {
             background: #4299e1; color: white; border: none;
@@ -98,145 +90,103 @@
             min-height: 0;
             margin-top: 10px;
         }
-        .map-wrapper {
-            flex: 1;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            padding: 6px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            min-height: 0;
-        }
+        .map-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         .map-container {
-            flex: 1;
-            position: relative;
-            min-height: 0;
-            border-radius: 6px;
-            overflow: hidden;
+            flex: 1; position: relative; border-radius: 10px;
+            overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-        .map-container #map { width: 100%; height: 100%; }
+        #map { width: 100%; height: 100%; }
 
         .result-bar {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            right: 12px;
-            background: rgba(255,255,255,0.95);
-            padding: 6px 12px;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            pointer-events: none;
-            font-size: 11px;
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; background: white; border-radius: 8px;
+            padding: 6px 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            display: flex; align-items: center; gap: 8px; font-size: 11px;
+            max-width: 90%;
         }
-        .result-bar .algo-badge {
-            background: #4299e1; color: white;
-            padding: 2px 8px; border-radius: 4px;
-            font-size: 10px; font-weight: 700;
+        .algo-badge {
+            background: #4299e1; color: white; padding: 2px 8px;
+            border-radius: 4px; font-weight: 700; font-size: 10px;
         }
-        .result-bar .path-text { font-weight: 600; color: #2b6cb0; flex: 1; font-size: 11px; }
-        .result-bar .cost-text { font-weight: 700; color: #38a169; white-space: nowrap; font-size: 11px; }
-        .result-bar .error-text { color: #e53e3e; font-weight: 600; font-size: 11px; }
+        .path-text { color: #2d3748; font-weight: 500; }
+        .cost-text { color: #38a169; font-weight: 700; }
+        .error-text { color: #e53e3e; font-weight: 600; }
 
         .hint-bar {
-            font-size: 10px; color: #718096; text-align: center;
-            padding: 4px; flex-shrink: 0; font-style: italic;
+            padding: 4px 10px; font-size: 10px; color: #718096;
+            background: white; border-radius: 6px; margin-top: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
         }
 
         .right-panel {
-            width: 200px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .info-card {
-            background: white; border-radius: 10px; padding: 10px;
+            width: 260px; display: flex; flex-direction: column;
+            background: white; border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            flex: 1; overflow-y: auto; min-height: 0;
+            overflow: hidden;
         }
-        .info-card h3 {
-            font-size: 11px; font-weight: 700; color: #2d3748;
-            margin-bottom: 6px; padding-bottom: 3px;
-            border-bottom: 2px solid #e2e8f0;
+        .tab-bar {
+            display: flex; border-bottom: 2px solid #e2e8f0;
         }
+        .tab-btn {
+            flex: 1; padding: 6px 4px; border: none; background: #f7fafc;
+            font-size: 10px; font-weight: 600; cursor: pointer; color: #718096;
+            transition: all 0.15s;
+        }
+        .tab-btn:hover { background: #edf2f7; }
+        .tab-btn.active { background: white; color: #4299e1; border-bottom: 2px solid #4299e1; margin-bottom: -2px; }
+        .info-card { padding: 10px; overflow-y: auto; flex: 1; }
+        .tab-content.hidden { display: none; }
         .node-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 2px 0; font-size: 10px; color: #4a5568;
-            border-bottom: 1px solid #f7fafc;
+            padding: 3px 6px; border-radius: 4px; font-size: 10px;
+            transition: background 0.1s;
         }
-        .node-row .node-name { font-weight: 600; }
-        .node-row .node-cat { color: #a0aec0; font-size: 9px; }
-        .node-row .del-btn {
-            background: none; border: 1px solid #e2e8f0; border-radius: 4px;
-            cursor: pointer; font-size: 9px; color: #e53e3e; padding: 0 4px;
-            line-height: 16px;
+        .node-row:hover { background: #f7fafc; }
+        .node-name { font-weight: 600; color: #2d3748; }
+        .node-cat { color: #a0aec0; font-size: 9px; }
+        .del-btn {
+            background: none; border: none; color: #e53e3e;
+            font-size: 11px; cursor: pointer; padding: 0 4px; font-weight: 700;
         }
-        .node-row .del-btn:hover { background: #fff5f5; }
-
-        .toast {
-            position: fixed; bottom: 20px; right: 20px;
-            background: #38a169; color: white;
-            padding: 8px 18px; border-radius: 8px;
-            font-size: 12px; font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: opacity 0.3s; opacity: 0;
-            pointer-events: none; z-index: 10000;
-        }
-        .toast.show { opacity: 1; }
-        .toast.error { background: #e53e3e; }
-
-        .right-panel .info-card { flex: 1; overflow-y: auto; min-height: 0; }
-        .tab-bar { display: flex; gap: 2px; flex-shrink: 0; }
-        .tab-btn {
-            flex: 1; padding: 5px 4px; border: none; border-radius: 6px 6px 0 0;
-            font-size: 9px; font-weight: 700; cursor: pointer; color: #a0aec0;
-            background: transparent; transition: all 0.15s; text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .tab-btn:hover { color: #4a5568; background: #edf2f7; }
-        .tab-btn.active { color: #4299e1; background: white; box-shadow: 0 -2px 0 #4299e1; }
-        .tab-content { flex: 1; overflow-y: auto; min-height: 0; }
-        .tab-content.hidden { display: none; }
+        .del-btn:hover { color: #c53030; }
         .complexity-badge {
-            display: inline-block; margin-top: 6px; padding: 2px 8px;
-            background: #ebf8ff; color: #4299e1; border-radius: 4px;
-            font-size: 9px; font-weight: 700; border: 1px solid #bee3f8;
+            margin-top: 6px; padding: 3px 8px; background: #ebf8ff;
+            border-radius: 4px; font-size: 9px; color: #3182ce; font-weight: 600;
         }
+
+        .info-box { font-size: 10px; }
+        .info-box .row { margin-bottom: 3px; }
+        .info-box .label { font-weight: 700; color: #718096; }
+        .service-tag {
+            display: inline-block; padding: 1px 6px; background: #ebf8ff;
+            border-radius: 3px; font-size: 9px; color: #3182ce; margin: 1px;
+        }
+
         .traversal-bar { display: flex; gap: 2px; margin-bottom: 6px; }
         .traversal-btn {
             padding: 3px 8px; border: 2px solid #e2e8f0; border-radius: 4px;
-            background: #f7fafc; font-size: 9px; font-weight: 600; cursor: pointer;
-            color: #4a5568; transition: all 0.15s;
+            background: white; font-size: 9px; font-weight: 600; cursor: pointer;
+            color: #718096; transition: all 0.15s;
         }
-        .traversal-btn:hover { border-color: #4299e1; background: #ebf8ff; }
-        .traversal-btn.active { border-color: #4299e1; background: #4299e1; color: white; }
-        .info-box {
-            background: #f7fafc; border-radius: 6px; padding: 8px;
-            font-size: 10px; color: #2d3748; margin-top: 6px;
-        }
-        .info-box .row { padding: 2px 0; }
-        .info-box .label { font-weight: 700; color: #718096; }
-        .info-box .service-tag {
-            display: inline-block; background: #ebf8ff; color: #2b6cb0;
-            padding: 1px 6px; border-radius: 3px; font-size: 9px; margin: 1px 2px 1px 0;
-        }
-        .adj-item {
-            padding: 4px 0; border-bottom: 1px solid #f7fafc; font-size: 10px;
-        }
+        .traversal-btn:hover { border-color: #805ad5; background: #faf5ff; }
+        .traversal-btn.active { border-color: #805ad5; background: #805ad5; color: white; }
+
+        .adj-item { font-size: 10px; }
         .adj-item .vtx { font-weight: 700; color: #2d3748; }
-        .adj-item .edge { color: #718096; margin-left: 8px; }
-        .adj-item .edge .w { color: #38a169; font-weight: 600; }
+        .adj-item .w { color: #38a169; font-weight: 600; }
+
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #38a169; color: white; padding: 8px 20px;
+            border-radius: 8px; font-size: 12px; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10002;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+
         .node-label {
-            background: transparent !important;
+            background: rgba(26,54,93,0.9) !important;
             border: none !important;
-            box-shadow: none !important;
             color: white !important;
             font-size: 9px !important;
             font-weight: 700 !important;
@@ -268,9 +218,11 @@
         <div class="mode-group">
             <button class="mode-btn" data-mode="select" onclick="setMode('select')">Move</button>
             <button class="mode-btn green" data-mode="add-node" onclick="setMode('add-node')">+Node</button>
-            <button class="mode-btn green" data-mode="add-edge" onclick="setMode('add-edge')">+Edge</button>
+            <button class="mode-btn purple" data-mode="add-junction" onclick="setMode('add-junction')">+Jct</button>
+            <button class="mode-btn purple" data-mode="add-walkway" onclick="setMode('add-walkway')">+Walkway</button>
             <button class="mode-btn danger" data-mode="delete-node" onclick="setMode('delete-node')">Del Node</button>
-            <button class="mode-btn orange" data-mode="delete-edge" onclick="setMode('delete-edge')">Del Edge</button>
+            <button class="mode-btn orange" data-mode="delete-junction" onclick="setMode('delete-junction')">Del Jct</button>
+            <button class="mode-btn orange" data-mode="delete-walkway" onclick="setMode('delete-walkway')">Del Walkway</button>
         </div>
         <div class="sep"></div>
         <div class="nav-group" id="navGroup">
@@ -294,7 +246,7 @@
             <div class="map-container">
                 <div class="result-bar" id="resultBar">
                     <span class="algo-badge">Info</span>
-                    <span class="path-text">Click to add nodes, then connect them</span>
+                    <span class="path-text">Draw walkways, add junctions, then add buildings</span>
                 </div>
                 <div id="map"></div>
             </div>
@@ -339,7 +291,7 @@
 
     <div id="nodeForm" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:24px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.3);z-index:10001;width:300px;">
         <h3 style="font-size:14px;margin-bottom:10px;color:#2d3748;">Add Node</h3>
-        <input type="text" id="nodeNameInput" placeholder="Enter node name"
+        <input type="text" id="nodeNameInput" placeholder="Enter building name"
             style="width:100%;padding:8px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:13px;outline:none;"
             onkeydown="if(event.key==='Enter')confirmAddNode()">
         <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
@@ -349,16 +301,28 @@
         </div>
     </div>
 
+    <div id="junctionForm" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:24px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.3);z-index:10001;width:300px;">
+        <h3 style="font-size:14px;margin-bottom:10px;color:#2d3748;">Add Junction</h3>
+        <input type="text" id="junctionNameInput" placeholder="e.g. J1, Crossroad A"
+            style="width:100%;padding:8px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:13px;outline:none;"
+            onkeydown="if(event.key==='Enter')confirmAddJunction()">
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
+            <button onclick="cancelAddJunction()"
+                style="padding:6px 14px;border:2px solid #e2e8f0;border-radius:6px;background:white;font-size:12px;font-weight:600;cursor:pointer;">Cancel</button>
+            <button onclick="confirmAddJunction()" class="btn" style="background:#805ad5;">Add</button>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
-        let map, markers = {}, edgeLines = [], pathLine = null;
+        let map, markers = {}, junctionMarkers = {}, walkwayLines = [], edgeLines = [], pathLine = null;
         let mode = 'select';
-        let edgeSource = null;
-        let edgeWaypoints = [];
-        let tempEdgeLayers = [];
+        let walkwaySource = null;
+        let walkwayWaypoints = [];
+        let tempWalkwayLayers = [];
         let pendingLat = null, pendingLng = null;
-        let allNodes = {}, allEdges = [];
+        let allNodes = {}, allEdges = [], allJunctions = {}, allWalkways = [];
 
         function init() {
             map = L.map('map', {
@@ -375,7 +339,7 @@
 
             L.control.zoom({ position: 'bottomright' }).addTo(map);
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') { cancelAddNode(); clearTempEdge(); }
+                if (e.key === 'Escape') { cancelAddNode(); cancelAddJunction(); clearTempWalkway(); }
             });
             map.on('click', function(e) {
                 if (mode === 'add-node') {
@@ -384,24 +348,17 @@
                     document.getElementById('nodeForm').style.display = 'block';
                     document.getElementById('nodeNameInput').value = '';
                     setTimeout(() => document.getElementById('nodeNameInput').focus(), 100);
-                } else if (mode === 'add-edge') {
-                    if (edgeSource) {
-                        edgeWaypoints.push([e.latlng.lat, e.latlng.lng]);
-                        const dot = L.circleMarker([e.latlng.lat, e.latlng.lng], {
-                            radius: 3, color: '#d69e2e', fillColor: '#d69e2e', fillOpacity: 1
-                        }).addTo(map);
-                        tempEdgeLayers.push(dot);
-                        const coords = [markers[edgeSource].getLatLng(), ...edgeWaypoints];
-                        if (tempEdgeLayers.length > 0) {
-                            const prevLine = tempEdgeLayers.find(l => l._isTempLine);
-                            if (prevLine) { map.removeLayer(prevLine); tempEdgeLayers = tempEdgeLayers.filter(l => l !== prevLine); }
-                        }
-                        const line = L.polyline(coords, { color: '#d69e2e', weight: 2, dashArray: '5,5' }).addTo(map);
-                        line._isTempLine = true;
-                        tempEdgeLayers.push(line);
-                        showToast(`Waypoint added (${edgeWaypoints.length}). Click target node to finish.`, '#d69e2e');
+                } else if (mode === 'add-junction') {
+                    pendingLat = e.latlng.lat;
+                    pendingLng = e.latlng.lng;
+                    document.getElementById('junctionForm').style.display = 'block';
+                    document.getElementById('junctionNameInput').value = '';
+                    setTimeout(() => document.getElementById('junctionNameInput').focus(), 100);
+                } else if (mode === 'add-walkway') {
+                    if (walkwaySource) {
+                        showToast('Click a junction to finish the walkway', '#805ad5');
                     } else {
-                        showToast('Click a source node first', '#d69e2e');
+                        showToast('Click a junction to start the walkway', '#805ad5');
                     }
                 }
             });
@@ -410,16 +367,18 @@
             setTimeout(() => map.invalidateSize(), 200);
         }
 
-        function clearTempEdge() {
-            tempEdgeLayers.forEach(l => { try { map.removeLayer(l); } catch(e) {} });
-            tempEdgeLayers = [];
-            edgeWaypoints = [];
-            if (edgeSource && markers[edgeSource]) markers[edgeSource].setIcon(makePinIcon('#4299e1'));
-            edgeSource = null;
+        function clearTempWalkway() {
+            tempWalkwayLayers.forEach(l => { try { map.removeLayer(l); } catch(e) {} });
+            tempWalkwayLayers = [];
+            walkwayWaypoints = [];
+            if (walkwaySource && junctionMarkers[walkwaySource]) {
+                junctionMarkers[walkwaySource].setIcon(makeJunctionIcon('#805ad5'));
+            }
+            walkwaySource = null;
         }
 
         function setMode(newMode) {
-            clearTempEdge();
+            clearTempWalkway();
             mode = newMode;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             const btn = document.querySelector(`.mode-btn[data-mode="${newMode}"]`);
@@ -427,10 +386,12 @@
 
             const hints = {
                 'select': 'Mode: <strong>Move</strong> — drag nodes around',
-                'add-node': 'Mode: <strong>+Node</strong> — click anywhere on the map to add a node',
-                'add-edge': 'Mode: <strong>+Edge</strong> — click source node, click waypoints on map, then click target node',
-                'delete-node': 'Mode: <strong>Del Node</strong> — click a node to remove it and its edges',
-                'delete-edge': 'Mode: <strong>Del Edge</strong> — click an edge line to remove it'
+                'add-node': 'Mode: <strong>+Node</strong> — click on the map to place a building',
+                'add-junction': 'Mode: <strong>+Jct</strong> — click on the map to place a junction point',
+                'add-walkway': 'Mode: <strong>+Walkway</strong> — click source junction, then click target junction',
+                'delete-node': 'Mode: <strong>Del Node</strong> — click a building to remove it',
+                'delete-junction': 'Mode: <strong>Del Jct</strong> — click a junction to remove it',
+                'delete-walkway': 'Mode: <strong>Del Walkway</strong> — click a walkway line to remove it'
             };
             document.getElementById('hintBar').innerHTML = hints[newMode] || '';
 
@@ -469,25 +430,49 @@
             .catch(() => showToast('Error deleting node', '#e53e3e'));
         }
 
-        function addEdgeApi(from, to, path) {
-            const body = { from, to };
-            if (path && path.length > 0) body.path = path;
-            fetch('/api/edges', {
+        function addJunctionApi(name, lat, lng) {
+            fetch('/api/junctions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
+                body: JSON.stringify({ name, lat, lng })
             })
             .then(r => r.json())
             .then(data => {
                 if (data.error) { showToast(data.error, '#e53e3e'); return; }
-                showToast(`Edge: ${from} ↔ ${to}`);
+                showToast(`Junction: ${name}`);
                 loadGraphFromApi();
             })
-            .catch(() => showToast('Error adding edge', '#e53e3e'));
+            .catch(() => showToast('Error adding junction', '#e53e3e'));
         }
 
-        function deleteEdgeApi(from, to) {
-            fetch('/api/edges', {
+        function deleteJunctionApi(name) {
+            fetch(`/api/junctions/${encodeURIComponent(name)}`, { method: 'DELETE' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showToast(data.error, '#e53e3e'); return; }
+                showToast(`Deleted junction: ${name}`);
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error deleting junction', '#e53e3e'));
+        }
+
+        function addWalkwayApi(from, to) {
+            fetch('/api/walkways', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ from, to })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showToast(data.error, '#e53e3e'); return; }
+                showToast(`Walkway: ${from} ↔ ${to}`);
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error adding walkway', '#e53e3e'));
+        }
+
+        function deleteWalkwayApi(from, to) {
+            fetch('/api/walkways', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ from, to })
@@ -497,7 +482,7 @@
                 if (data.error) { showToast(data.error, '#e53e3e'); return; }
                 loadGraphFromApi();
             })
-            .catch(() => showToast('Error deleting edge', '#e53e3e'));
+            .catch(() => showToast('Error deleting walkway', '#e53e3e'));
         }
 
         function loadGraphFromApi() {
@@ -506,6 +491,8 @@
             .then(state => {
                 allNodes = state.nodes || {};
                 allEdges = state.edges || [];
+                allJunctions = state.junctions || {};
+                allWalkways = state.walkways || [];
                 renderGraph();
                 renderSidebar();
             })
@@ -517,6 +504,10 @@
 
             edgeLines.forEach(l => { try { map.removeLayer(l); } catch(e) {} });
             edgeLines = [];
+            walkwayLines.forEach(l => { try { map.removeLayer(l); } catch(e) {} });
+            walkwayLines = [];
+            Object.values(junctionMarkers).forEach(m => { try { map.removeLayer(m); } catch(e) {} });
+            junctionMarkers = {};
             if (pathLine) { map.removeLayer(pathLine); pathLine = null; }
 
             for (const [name, data] of Object.entries(allNodes)) {
@@ -533,6 +524,38 @@
                 }
             }
 
+            for (const [jname, jct] of Object.entries(allJunctions)) {
+                createJunctionMarker(jname, jct);
+            }
+
+            for (const w of allWalkways) {
+                const a = allJunctions[w.from], b = allJunctions[w.to];
+                if (!a || !b) continue;
+                let coords;
+                if (w.path && w.path.length > 0) {
+                    coords = [[a.lat, a.lng], ...w.path, [b.lat, b.lng]];
+                } else {
+                    coords = [[a.lat, a.lng], [b.lat, b.lng]];
+                }
+                const clickLayer = L.polyline(coords, {
+                    color: 'transparent', weight: 20, opacity: 0, interactive: true
+                }).addTo(map);
+                clickLayer.on('click', function() {
+                    if (mode === 'delete-walkway') {
+                        if (confirm(`Delete walkway ${w.from} ↔ ${w.to}?`)) {
+                            deleteWalkwayApi(w.from, w.to);
+                        }
+                    }
+                });
+                walkwayLines.push(clickLayer);
+
+                const visual = L.polyline(coords, {
+                    color: '#805ad5', weight: 4, opacity: 0.7, interactive: false
+                }).addTo(map);
+                visual.bindTooltip(w.weight + 'm', { sticky: true, direction: 'center', className: 'edge-label' });
+                walkwayLines.push(visual);
+            }
+
             for (const e of allEdges) {
                 const a = allNodes[e.from], b = allNodes[e.to];
                 if (!a || !b) continue;
@@ -545,20 +568,10 @@
                 const clickLayer = L.polyline(coords, {
                     color: 'transparent', weight: 20, opacity: 0, interactive: true
                 }).addTo(map);
-                clickLayer._from = e.from;
-                clickLayer._to = e.to;
-                clickLayer.on('click', function() {
-                    if (mode === 'delete-edge') {
-                        if (confirm(`Delete edge ${e.from} ↔ ${e.to}?`)) {
-                            deleteEdgeApi(e.from, e.to);
-                        }
-                    }
-                });
                 edgeLines.push(clickLayer);
                 const visual = L.polyline(coords, {
                     color: '#a0aec0', weight: 3, opacity: 0.7, interactive: false
                 }).addTo(map);
-                visual.bindTooltip(e.weight + 'm', { sticky: true, direction: 'center', className: 'edge-label' });
                 edgeLines.push(visual);
             }
 
@@ -580,6 +593,19 @@
             });
         }
 
+        function makeJunctionIcon(color) {
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">'
+                + '<rect x="2" y="2" width="12" height="12" rx="2" fill="' + color + '" stroke="white" stroke-width="2"/>'
+                + '</svg>';
+            return L.divIcon({
+                className: '',
+                html: svg,
+                iconSize: [16, 16],
+                iconAnchor: [8, 8],
+                tooltipAnchor: [0, -12],
+            });
+        }
+
         function createMarker(name, data) {
             const m = L.marker([data.lat, data.lng], {
                 icon: makePinIcon('#4299e1'),
@@ -595,20 +621,6 @@
                 if (mode === 'delete-node') {
                     if (confirm(`Delete node "${name}" and its edges?`)) {
                         deleteNodeApi(name);
-                    }
-                } else if (mode === 'add-edge') {
-                    if (!edgeSource) {
-                        edgeSource = name;
-                        this.setIcon(makePinIcon('#d69e2e'));
-                        showToast('Click waypoints on the map, then click target node', '#d69e2e');
-                    } else if (edgeSource === name) {
-                        clearTempEdge();
-                        loadGraphFromApi();
-                        showToast('Cancelled');
-                    } else {
-                        addEdgeApi(edgeSource, name, edgeWaypoints);
-                        clearTempEdge();
-                        loadGraphFromApi();
                     }
                 } else if (mode === 'add-node') {
                     showToast('Click empty area on the map', '#d69e2e');
@@ -631,29 +643,92 @@
             return m;
         }
 
+        function createJunctionMarker(name, jct) {
+            const m = L.marker([jct.lat, jct.lng], {
+                icon: makeJunctionIcon('#805ad5'),
+                draggable: true,
+            }).addTo(map);
+
+            m.bindTooltip(name, {
+                permanent: true, direction: 'top', offset: [0, -12], className: 'node-label'
+            });
+
+            m._junctionName = name;
+            m.on('click', function() {
+                if (mode === 'delete-junction') {
+                    if (confirm(`Delete junction "${name}"?`)) {
+                        deleteJunctionApi(name);
+                    }
+                } else if (mode === 'add-walkway') {
+                    if (!walkwaySource) {
+                        walkwaySource = name;
+                        this.setIcon(makeJunctionIcon('#d69e2e'));
+                        showToast('Click target junction to complete walkway', '#805ad5');
+                    } else if (walkwaySource === name) {
+                        clearTempWalkway();
+                        showToast('Cancelled');
+                    } else {
+                        addWalkwayApi(walkwaySource, name);
+                        clearTempWalkway();
+                    }
+                }
+            });
+
+            m.on('dragend', function(e) {
+                const pos = e.target.getLatLng();
+                fetch(`/api/junctions/${encodeURIComponent(name)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: pos.lat, lng: pos.lng })
+                })
+                .then(r => r.json())
+                .then(() => loadGraphFromApi())
+                .catch(() => {});
+            });
+
+            junctionMarkers[name] = m;
+            return m;
+        }
+
         function renderSidebar() {
             const list = document.getElementById('nodeList');
             const names = Object.keys(allNodes).sort();
+            const jnames = Object.keys(allJunctions).sort();
             document.getElementById('nodeCount').textContent = `(${names.length})`;
             let html = names.map(n => {
                 const d = allNodes[n];
                 const cat = d.category || 'Uncategorized';
+                const jct = d.nearest_junction ? ` → ${d.nearest_junction}` : '';
                 return `<div class="node-row">
-                    <span><span class="node-name">${n}</span> <span class="node-cat">${cat}</span></span>
+                    <span><span class="node-name">${n}</span> <span class="node-cat">${cat}${jct}</span></span>
                     <button class="del-btn" onclick="deleteNodeApi('${n}')">✕</button>
                 </div>`;
             }).join('');
-            if (allEdges.length > 0) {
+
+            if (jnames.length > 0) {
                 html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
-                html += '<span style="font-size:9px;font-weight:700;color:#718096;">EDGES</span>';
-                for (const e of allEdges) {
+                html += '<span style="font-size:9px;font-weight:700;color:#805ad5;">JUNCTIONS</span>';
+                for (const j of jnames) {
                     html += `<div class="node-row">
-                        <span style="font-size:9px;"><span class="node-name">${e.from}</span> ↔ <span class="node-name">${e.to}</span> <span style="color:#38a169;font-weight:600;">${e.weight}m</span></span>
-                        <button class="del-btn" onclick="deleteEdgeApi('${e.from}','${e.to}')">✕</button>
+                        <span style="font-size:9px;"><span class="node-name" style="color:#805ad5;">${j}</span></span>
+                        <button class="del-btn" onclick="deleteJunctionApi('${j}')">✕</button>
                     </div>`;
                 }
                 html += '</div>';
             }
+
+            if (allWalkways.length > 0) {
+                html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
+                html += '<span style="font-size:9px;font-weight:700;color:#805ad5;">WALKWAYS</span>';
+                for (const w of allWalkways) {
+                    html += `<div class="node-row">
+                        <span style="font-size:9px;"><span class="node-name" style="color:#805ad5;">${w.from}</span> ↔ <span class="node-name" style="color:#805ad5;">${w.to}</span> <span style="color:#38a169;font-weight:600;">${w.weight}m</span></span>
+                        <button class="del-btn" onclick="deleteWalkwayApi('${w.from}','${w.to}')">✕</button>
+                    </div>`;
+                }
+                html += '</div>';
+            }
+
             list.innerHTML = html;
         }
 
@@ -715,30 +790,30 @@
 
         function loadAdjacency() {
             const div = document.getElementById('adjDisplay');
-            const names = Object.keys(allNodes).sort();
+            const g = allNodes;
+            const jcts = allJunctions;
+            const names = Object.keys(g).sort();
             if (names.length === 0) { div.innerHTML = '<div style="font-size:10px;color:#a0aec0;">No nodes.</div>'; return; }
 
-            const adj = {};
-            for (const name of names) adj[name] = [];
-            for (const e of allEdges) {
-                if (adj[e.from]) adj[e.from].push({ to: e.to, weight: e.weight });
-                if (adj[e.to]) adj[e.to].push({ to: e.from, weight: e.weight });
-            }
-
-            let html = `<span style="font-size:10px;color:#718096;display:block;margin-bottom:4px;">${names.length} nodes, ${allEdges.length} edges</span>`;
-            for (const n of names) {
-                const edges = adj[n].sort((a, b) => a.to.localeCompare(b.to));
-                if (edges.length === 0) {
+            fetch('/api/adjacency')
+            .then(r => r.json())
+            .then(adj => {
+                let html = `<span style="font-size:10px;color:#718096;display:block;margin-bottom:4px;">${names.length} buildings, ${Object.keys(jcts).length} junctions</span>`;
+                for (const n of names) {
+                    const edges = (adj[n] || []).sort((a, b) => a.to.localeCompare(b.to));
+                    if (edges.length === 0) {
+                        html += `<div class="adj-item"><span class="vtx">${n}</span></div>`;
+                        continue;
+                    }
                     html += `<div class="adj-item"><span class="vtx">${n}</span></div>`;
-                    continue;
+                    for (let i = 0; i < edges.length; i++) {
+                        const conn = i === edges.length - 1 ? '└──' : '├──';
+                        html += `<div style="padding-left:12px;font-size:10px;color:#718096;">${conn} ${edges[i].to} <span class="w">${edges[i].weight}m</span></div>`;
+                    }
                 }
-                html += `<div class="adj-item"><span class="vtx">${n}</span></div>`;
-                for (let i = 0; i < edges.length; i++) {
-                    const conn = i === edges.length - 1 ? '└──' : '├──';
-                    html += `<div style="padding-left:12px;font-size:10px;color:#718096;">${conn} ${edges[i].to} <span class="w">${edges[i].weight}m</span></div>`;
-                }
-            }
-            div.innerHTML = html;
+                div.innerHTML = html;
+            })
+            .catch(() => {});
         }
 
         function updateSelects() {
@@ -797,18 +872,21 @@
             const coords = [];
             for (let i = 0; i < path.length; i++) {
                 const name = path[i];
-                const d = allNodes[name];
+                const nd = allNodes[name];
+                const jct = allJunctions[name];
+                const d = nd || jct;
                 if (!d) continue;
                 coords.push([d.lat, d.lng]);
+
                 if (i < path.length - 1) {
                     const next = path[i + 1];
-                    const edge = allEdges.find(e =>
-                        (e.from === name && e.to === next) || (e.from === next && e.to === name)
+                    const w = allWalkways.find(ww =>
+                        (ww.from === name && ww.to === next) || (ww.from === next && ww.to === name)
                     );
-                    if (edge && edge.path && edge.path.length > 0) {
-                        const pts = (edge.from === name && edge.to === next)
-                            ? edge.path
-                            : [...edge.path].reverse();
+                    if (w && w.path && w.path.length > 0) {
+                        const pts = (w.from === name && w.to === next)
+                            ? w.path
+                            : [...w.path].reverse();
                         for (const p of pts) coords.push([p[0], p[1]]);
                     }
                 }
@@ -824,24 +902,42 @@
                 else if (path && path.includes(name)) color = '#d69e2e';
                 m.setIcon(makePinIcon(color));
             }
+            for (const [name, m] of Object.entries(junctionMarkers)) {
+                let color = '#805ad5';
+                if (path && path.includes(name)) color = '#d69e2e';
+                m.setIcon(makeJunctionIcon(color));
+            }
         }
 
         function clearHighlights() {
             for (const m of Object.values(markers)) {
                 m.setIcon(makePinIcon('#4299e1'));
             }
+            for (const m of Object.values(junctionMarkers)) {
+                m.setIcon(makeJunctionIcon('#805ad5'));
+            }
             if (pathLine) { map.removeLayer(pathLine); pathLine = null; }
         }
 
         function clearGraph() {
-            if (!confirm('Delete ALL nodes and edges? This cannot be undone.')) return;
+            if (!confirm('Delete ALL nodes, junctions, and walkways? This cannot be undone.')) return;
             fetch('/api/graph', { method: 'GET' })
             .then(r => r.json())
             .then(state => {
-                const names = Object.keys(state.nodes || {});
-                const promises = names.map(n =>
-                    fetch(`/api/nodes/${encodeURIComponent(n)}`, { method: 'DELETE' })
-                );
+                const promises = [];
+                for (const n of Object.keys(state.nodes || {})) {
+                    promises.push(fetch(`/api/nodes/${encodeURIComponent(n)}`, { method: 'DELETE' }));
+                }
+                for (const j of Object.keys(state.junctions || {})) {
+                    promises.push(fetch(`/api/junctions/${encodeURIComponent(j)}`, { method: 'DELETE' }));
+                }
+                for (const w of state.walkways || []) {
+                    promises.push(fetch('/api/walkways', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ from: w.from, to: w.to })
+                    }));
+                }
                 return Promise.all(promises);
             })
             .then(() => {
@@ -856,8 +952,9 @@
             .then(r => r.json())
             .then(data => {
                 const parts = [`${data.nodes} nodes`];
+                if (data.junctions > 0) parts.push(`${data.junctions} junctions`);
+                if (data.walkways > 0) parts.push(`${data.walkways} walkways`);
                 if (data.edges > 0) parts.push(`${data.edges} edges`);
-                if (data.paths > 0) parts.push(`${data.paths} with paths`);
                 showToast(`Saved: ${parts.join(', ')}`);
             })
             .catch(() => showToast('Error saving', '#e53e3e'));
@@ -934,6 +1031,23 @@
 
         function cancelAddNode() {
             document.getElementById('nodeForm').style.display = 'none';
+            pendingLat = pendingLng = null;
+        }
+
+        function confirmAddJunction() {
+            const name = document.getElementById('junctionNameInput').value.trim();
+            if (name && pendingLat !== null && pendingLng !== null) {
+                addJunctionApi(name, pendingLat, pendingLng);
+            } else {
+                showToast('Enter a name', '#e53e3e');
+                return;
+            }
+            document.getElementById('junctionForm').style.display = 'none';
+            pendingLat = pendingLng = null;
+        }
+
+        function cancelAddJunction() {
+            document.getElementById('junctionForm').style.display = 'none';
             pendingLat = pendingLng = null;
         }
 

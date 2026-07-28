@@ -116,6 +116,84 @@ def delete_edge():
     return jsonify({"status": "ok"})
 
 
+@app.route("/api/junctions", methods=["GET"])
+def list_junctions():
+    return jsonify(nav._junctions)
+
+
+@app.route("/api/junctions", methods=["POST"])
+def add_junction():
+    data = request.json
+    name = data.get("name", "").strip()
+    if not name:
+        return jsonify({"error": "Name is required"}), 400
+    lat = data.get("lat")
+    lng = data.get("lng")
+    if lat is None or lng is None:
+        return jsonify({"error": "lat and lng are required"}), 400
+    nav.add_junction(name, lat, lng)
+    _save_state()
+    return jsonify({"status": "ok", "name": name}), 201
+
+
+@app.route("/api/junctions/<name>", methods=["DELETE"])
+def delete_junction(name):
+    if name not in nav._junctions:
+        return jsonify({"error": "Junction not found"}), 404
+    nav.remove_junction(name)
+    _save_state()
+    return jsonify({"status": "ok"})
+
+
+@app.route("/api/junctions/<name>", methods=["PUT"])
+def update_junction(name):
+    if name not in nav._junctions:
+        return jsonify({"error": "Junction not found"}), 404
+    data = request.json
+    nav.update_junction(
+        name,
+        lat=data.get("lat"),
+        lng=data.get("lng"),
+        new_name=data.get("new_name"),
+    )
+    _save_state()
+    return jsonify({"status": "ok"})
+
+
+@app.route("/api/walkways", methods=["GET"])
+def list_walkways():
+    return jsonify(nav._walkways)
+
+
+@app.route("/api/walkways", methods=["POST"])
+def add_walkway():
+    data = request.json
+    from_jct = data.get("from")
+    to_jct = data.get("to")
+    if not from_jct or not to_jct:
+        return jsonify({"error": "from and to are required"}), 400
+    path = data.get("path")
+    ok = nav.add_walkway(from_jct, to_jct, path)
+    if not ok:
+        return jsonify({"error": "Both junctions must exist"}), 400
+    _save_state()
+    return jsonify({"status": "ok"}), 201
+
+
+@app.route("/api/walkways", methods=["DELETE"])
+def delete_walkway():
+    data = request.json
+    from_jct = data.get("from")
+    to_jct = data.get("to")
+    if not from_jct or not to_jct:
+        return jsonify({"error": "from and to are required"}), 400
+    ok = nav.remove_walkway(from_jct, to_jct)
+    if not ok:
+        return jsonify({"error": "Walkway not found"}), 404
+    _save_state()
+    return jsonify({"status": "ok"})
+
+
 @app.route("/api/find_path", methods=["POST"])
 def find_path():
     data = request.json
@@ -155,12 +233,16 @@ def save_graph():
     num_nodes = len(state.get("nodes", {}))
     num_edges = len(state.get("edges", []))
     num_paths = sum(1 for e in state.get("edges", []) if e.get("path"))
+    num_junctions = len(state.get("junctions", {}))
+    num_walkways = len(state.get("walkways", []))
     return jsonify({
         "status": "ok",
-        "path": os.path.abspath(STATE_FILE),
+        "path": os.path.abspath(_get_state_path()),
         "nodes": num_nodes,
         "edges": num_edges,
         "paths": num_paths,
+        "junctions": num_junctions,
+        "walkways": num_walkways,
     })
 
 
@@ -214,12 +296,8 @@ def tree_traversal(traversal_type):
 
 @app.route("/api/adjacency", methods=["GET"])
 def get_adjacency():
-    state = nav.get_state()
-    adj = {name: [] for name in state.get("nodes", {})}
-    for e in state.get("edges", []):
-        adj.setdefault(e["from"], []).append({"to": e["to"], "weight": e["weight"]})
-        adj.setdefault(e["to"], []).append({"to": e["from"], "weight": e["weight"]})
-    return jsonify(adj)
+    g = nav._build_graph()
+    return jsonify(g.vertices)
 
 
 if __name__ == "__main__":

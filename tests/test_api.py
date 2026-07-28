@@ -32,7 +32,10 @@ class TestGraphAPI:
     def test_get_graph_empty(self, client):
         resp = client.get("/api/graph")
         d = resp.get_json()
-        assert d == {"nodes": {}, "edges": []}
+        assert d["nodes"] == {}
+        assert d["edges"] == []
+        assert d["junctions"] == {}
+        assert d["walkways"] == []
 
     def test_add_node(self, client):
         resp = client.post("/api/nodes", json={"name": "X", "lat": 1, "lng": 2})
@@ -253,5 +256,5 @@ class TestAdjacency:
         resp = client.get("/api/adjacency")
         adj = resp.get_json()
         lib_edges = adj["Library"]
-        weights = [e["weight"] for e in lib_edges]
+        weights = [w for _, w in lib_edges]
         assert all(isinstance(w, (int, float)) for w in weights)
