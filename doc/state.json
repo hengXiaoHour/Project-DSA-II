@@ -1,67 +1,65 @@
 {
   "nodes": {
     "Building A": {
-      "category": "Academic",
       "lat": 11.568361711145743,
-      "lng": 104.89156007766725
+      "lng": 104.89156007766725,
+      "category": "Academic"
     },
     "Building B": {
-      "category": "Academic",
-      "lat": 11.56978560829277,
-      "lng": 104.88954305648804
+      "lat": 11.569436229645786,
+      "lng": 104.88959670066835,
+      "category": "Academic"
     },
     "Building C": {
-      "category": "Academic",
       "lat": 11.570072142259491,
-      "lng": 104.89123553037645
+      "lng": 104.89123553037645,
+      "category": "Academic"
     },
     "Building D": {
-      "category": "Academic",
-      "lat": 11.569273237746673,
-      "lng": 104.88915145397188
+      "lat": 11.569332823603386,
+      "lng": 104.88959401845935,
+      "category": "Academic"
     },
     "Building Stem": {
-      "category": "Academic",
-      "lat": 11.569368002872741,
-      "lng": 104.88977372646333
+      "lat": 11.569362743433832,
+      "lng": 104.88977909088136,
+      "category": "Academic"
     },
     "Building T": {
-      "category": "Academic",
       "lat": 11.570185219652146,
-      "lng": 104.89181756973268
+      "lng": 104.89181756973268,
+      "category": "Academic"
     },
     "CKCC": {
-      "category": "Academic",
-      "lat": 11.569199828219894,
-      "lng": 104.88860160112382
+      "lat": 11.56884075498352,
+      "lng": 104.88881838321686,
+      "category": "Academic"
     },
     "Canteen": {
-      "category": "Service",
-      "lat": 11.56957032470631,
-      "lng": 104.89088684320451
+      "lat": 11.570091299808924,
+      "lng": 104.8906147480011,
+      "category": "Service"
     },
     "Entrance": {
-      "category": "Access Point",
       "lat": 11.567410201444254,
-      "lng": 104.89170223474504
+      "lng": 104.89170223474504,
+      "category": "Service"
     },
     "Library": {
-      "category": "Service",
       "lat": 11.568114544604855,
-      "lng": 104.88957524299622
+      "lng": 104.88957524299622,
+      "category": "Service"
     },
     "NICC": {
-      "category": "Service",
-      "lat": 11.568232519386843,
-      "lng": 104.88872766494752
+      "lat": 11.568783130383396,
+      "lng": 104.88908636569977,
+      "category": "Service"
     },
     "Study Office": {
-      "category": "Administration",
-      "lat": 11.569459980219387,
-      "lng": 104.89030212163927
+      "lat": 11.569876154761333,
+      "lng": 104.89026325941086,
+      "category": "Admin"
     }
   },
-  "edges": [],
-  "junctions": {},
   "walkways": []
 }
