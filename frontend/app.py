@@ -111,6 +111,50 @@ def delete_walkway(name):
     return jsonify({"status": "ok"})
 
 
+@app.route("/api/junctions", methods=["GET"])
+def list_junctions():
+    return jsonify(nav._junctions)
+
+
+@app.route("/api/junctions", methods=["POST"])
+def add_junction():
+    data = request.json
+    name = data.get("name", "").strip()
+    if not name:
+        return jsonify({"error": "Name is required"}), 400
+    lat = data.get("lat")
+    lng = data.get("lng")
+    if lat is None or lng is None:
+        return jsonify({"error": "lat and lng are required"}), 400
+    nav.add_junction(name, lat, lng)
+    _save_state()
+    return jsonify({"status": "ok", "name": name}), 201
+
+
+@app.route("/api/junctions/<name>", methods=["DELETE"])
+def delete_junction(name):
+    if name not in nav._junctions:
+        return jsonify({"error": "Junction not found"}), 404
+    nav.remove_junction(name)
+    _save_state()
+    return jsonify({"status": "ok"})
+
+
+@app.route("/api/junctions/<name>", methods=["PUT"])
+def update_junction(name):
+    if name not in nav._junctions:
+        return jsonify({"error": "Junction not found"}), 404
+    data = request.json
+    nav.update_junction(
+        name,
+        lat=data.get("lat"),
+        lng=data.get("lng"),
+        new_name=data.get("new_name"),
+    )
+    _save_state()
+    return jsonify({"status": "ok"})
+
+
 @app.route("/api/find_path", methods=["POST"])
 def find_path():
     data = request.json

@@ -217,8 +217,10 @@
         <div class="mode-group">
             <button class="mode-btn" data-mode="select" onclick="setMode('select')">Move</button>
             <button class="mode-btn green" data-mode="add-node" onclick="setMode('add-node')">+Node</button>
+            <button class="mode-btn purple" data-mode="add-junction" onclick="setMode('add-junction')">+Jct</button>
             <button class="mode-btn purple" data-mode="add-walkway" onclick="setMode('add-walkway')">+Walkway</button>
             <button class="mode-btn danger" data-mode="delete-node" onclick="setMode('delete-node')">Del Node</button>
+            <button class="mode-btn orange" data-mode="delete-junction" onclick="setMode('delete-junction')">Del Jct</button>
             <button class="mode-btn orange" data-mode="delete-walkway" onclick="setMode('delete-walkway')">Del Walkway</button>
         </div>
         <div class="sep"></div>
@@ -298,15 +300,27 @@
         </div>
     </div>
 
+    <div id="junctionForm" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:24px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.3);z-index:10001;width:300px;">
+        <h3 style="font-size:14px;margin-bottom:10px;color:#2d3748;">Add Junction</h3>
+        <input type="text" id="junctionNameInput" placeholder="e.g. J1, Crossroad"
+            style="width:100%;padding:8px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:13px;outline:none;"
+            onkeydown="if(event.key==='Enter')confirmAddJunction()">
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
+            <button onclick="cancelAddJunction()"
+                style="padding:6px 14px;border:2px solid #e2e8f0;border-radius:6px;background:white;font-size:12px;font-weight:600;cursor:pointer;">Cancel</button>
+            <button onclick="confirmAddJunction()" class="btn purple">Add</button>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
-        let map, markers = {}, walkwayLayers = [], pathLine = null;
+        let map, markers = {}, junctionMarkers = {}, walkwayLayers = [], pathLine = null;
         let mode = 'select';
         let walkwayPoints = [];
         let tempWalkwayLayers = [];
         let pendingLat = null, pendingLng = null;
-        let allNodes = {}, allWalkways = [];
+        let allNodes = {}, allJunctions = {}, allWalkways = [];
 
         function init() {
             map = L.map('map', {
@@ -340,6 +354,12 @@
                     document.getElementById('nodeForm').style.display = 'block';
                     document.getElementById('nodeNameInput').value = '';
                     setTimeout(() => document.getElementById('nodeNameInput').focus(), 100);
+                } else if (mode === 'add-junction') {
+                    pendingLat = e.latlng.lat;
+                    pendingLng = e.latlng.lng;
+                    document.getElementById('junctionForm').style.display = 'block';
+                    document.getElementById('junctionNameInput').value = '';
+                    setTimeout(() => document.getElementById('junctionNameInput').focus(), 100);
                 } else if (mode === 'add-walkway') {
                     walkwayPoints.push([e.latlng.lat, e.latlng.lng]);
                     const dot = L.circleMarker([e.latlng.lat, e.latlng.lng], {
@@ -356,7 +376,7 @@
                     }
 
                     const hint = document.getElementById('hintBar');
-                    hint.innerHTML = `Mode: <strong>+Walkway</strong> — ${walkwayPoints.length} points. Click <b>Finish Walkway</b> or press <b>Enter</b> to save.`;
+                    hint.innerHTML = `Mode: <strong>+Walkway</strong> — ${walkwayPoints.length} points. Press <b>Enter</b> to save.`;
                 }
             });
 
@@ -384,8 +404,10 @@
             const hints = {
                 'select': 'Mode: <strong>Move</strong> — drag buildings around',
                 'add-node': 'Mode: <strong>+Node</strong> — click on the map to place a building',
-                'add-walkway': 'Mode: <strong>+Walkway</strong> — click on the map to draw path points. Press Enter or click Finish to save.',
+                'add-junction': 'Mode: <strong>+Jct</strong> — click on the map to place a junction point',
+                'add-walkway': 'Mode: <strong>+Walkway</strong> — click on the map to draw path points. Press Enter to save.',
                 'delete-node': 'Mode: <strong>Del Node</strong> — click a building to remove it',
+                'delete-junction': 'Mode: <strong>Del Jct</strong> — click a junction to remove it',
                 'delete-walkway': 'Mode: <strong>Del Walkway</strong> — click a purple walkway line to remove it'
             };
             document.getElementById('hintBar').innerHTML = hints[newMode] || '';
@@ -419,6 +441,32 @@
                 loadGraphFromApi();
             })
             .catch(() => showToast('Error deleting node', '#e53e3e'));
+        }
+
+        function addJunctionApi(name, lat, lng) {
+            fetch('/api/junctions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, lat, lng })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showToast(data.error, '#e53e3e'); return; }
+                showToast(`Junction: ${name}`);
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error adding junction', '#e53e3e'));
+        }
+
+        function deleteJunctionApi(name) {
+            fetch(`/api/junctions/${encodeURIComponent(name)}`, { method: 'DELETE' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showToast(data.error, '#e53e3e'); return; }
+                showToast(`Deleted junction: ${name}`);
+                loadGraphFromApi();
+            })
+            .catch(() => showToast('Error deleting junction', '#e53e3e'));
         }
 
         function addWalkwayApi(points) {
@@ -464,6 +512,7 @@
             .then(r => r.json())
             .then(state => {
                 allNodes = state.nodes || {};
+                allJunctions = state.junctions || {};
                 allWalkways = state.walkways || [];
                 renderGraph();
                 renderSidebar();
@@ -476,6 +525,8 @@
 
             walkwayLayers.forEach(l => { try { map.removeLayer(l); } catch(e) {} });
             walkwayLayers = [];
+            Object.values(junctionMarkers).forEach(m => { try { map.removeLayer(m); } catch(e) {} });
+            junctionMarkers = {};
             if (pathLine) { map.removeLayer(pathLine); pathLine = null; }
 
             for (const [name, data] of Object.entries(allNodes)) {
@@ -492,11 +543,24 @@
                 }
             }
 
+            for (const [jname, jct] of Object.entries(allJunctions)) {
+                createJunctionMarker(jname, jct);
+            }
+
             for (const w of allWalkways) {
                 const pts = w.points;
                 if (!pts || pts.length < 2) continue;
 
-                const clickLayer = L.polyline(pts, {
+                const resolved = pts.map(p => {
+                    if (typeof p === 'string' && allJunctions[p]) {
+                        return [allJunctions[p].lat, allJunctions[p].lng];
+                    }
+                    if (Array.isArray(p)) return p;
+                    return null;
+                }).filter(Boolean);
+                if (resolved.length < 2) continue;
+
+                const clickLayer = L.polyline(resolved, {
                     color: 'transparent', weight: 20, opacity: 0, interactive: true
                 }).addTo(map);
                 clickLayer.on('click', function(ev) {
@@ -509,7 +573,7 @@
                 });
                 walkwayLayers.push(clickLayer);
 
-                const visual = L.polyline(pts, {
+                const visual = L.polyline(resolved, {
                     color: '#805ad5', weight: 4, opacity: 0.7, interactive: false
                 }).addTo(map);
                 visual.bindTooltip(w.weight + 'm', { sticky: true, direction: 'center', className: 'edge-label' });
@@ -569,9 +633,82 @@
             return m;
         }
 
+        function makeJunctionIcon(color) {
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">'
+                + '<rect x="2" y="2" width="16" height="16" rx="3" fill="' + color + '" stroke="white" stroke-width="2"/>'
+                + '</svg>';
+            return L.divIcon({
+                className: '',
+                html: svg,
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
+                tooltipAnchor: [0, -13],
+            });
+        }
+
+        function createJunctionMarker(name, jct) {
+            const m = L.marker([jct.lat, jct.lng], {
+                icon: makeJunctionIcon('#805ad5'),
+                draggable: true,
+            }).addTo(map);
+
+            m.bindTooltip(name, {
+                permanent: true, direction: 'top', offset: [0, -13], className: 'node-label'
+            });
+
+            m._junctionName = name;
+            m.on('click', function() {
+                if (mode === 'delete-junction') {
+                    if (confirm(`Delete junction "${name}"?`)) {
+                        deleteJunctionApi(name);
+                    }
+                } else if (mode === 'add-walkway') {
+                    walkwayPoints.push(name);
+                    const dot = L.circleMarker([jct.lat, jct.lng], {
+                        radius: 5, color: '#805ad5', fillColor: '#805ad5', fillOpacity: 1
+                    }).addTo(map);
+                    tempWalkwayLayers.push(dot);
+
+                    if (walkwayPoints.length > 1) {
+                        const prev = tempWalkwayLayers.find(l => l._isTempLine);
+                        if (prev) { map.removeLayer(prev); tempWalkwayLayers = tempWalkwayLayers.filter(l => l !== prev); }
+                        const resolved = walkwayPoints.map(p => {
+                            if (typeof p === 'string' && allJunctions[p]) return [allJunctions[p].lat, allJunctions[p].lng];
+                            if (Array.isArray(p)) return p;
+                            return null;
+                        }).filter(Boolean);
+                        if (resolved.length >= 2) {
+                            const line = L.polyline(resolved, { color: '#805ad5', weight: 3, dashArray: '8,6' }).addTo(map);
+                            line._isTempLine = true;
+                            tempWalkwayLayers.push(line);
+                        }
+                    }
+
+                    const hint = document.getElementById('hintBar');
+                    hint.innerHTML = `Mode: <strong>+Walkway</strong> — ${walkwayPoints.length} points. Press <b>Enter</b> to save.`;
+                }
+            });
+
+            m.on('dragend', function(e) {
+                const pos = e.target.getLatLng();
+                fetch(`/api/junctions/${encodeURIComponent(name)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: pos.lat, lng: pos.lng })
+                })
+                .then(r => r.json())
+                .then(() => loadGraphFromApi())
+                .catch(() => {});
+            });
+
+            junctionMarkers[name] = m;
+            return m;
+        }
+
         function renderSidebar() {
             const list = document.getElementById('nodeList');
             const names = Object.keys(allNodes).sort();
+            const jnames = Object.keys(allJunctions).sort();
             document.getElementById('nodeCount').textContent = `(${names.length})`;
             let html = names.map(n => {
                 const d = allNodes[n];
@@ -581,6 +718,18 @@
                     <button class="del-btn" onclick="deleteNodeApi('${n}')">✕</button>
                 </div>`;
             }).join('');
+
+            if (jnames.length > 0) {
+                html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
+                html += '<span style="font-size:9px;font-weight:700;color:#805ad5;">JUNCTIONS</span>';
+                for (const j of jnames) {
+                    html += `<div class="node-row">
+                        <span style="font-size:9px;"><span class="node-name" style="color:#805ad5;">${j}</span></span>
+                        <button class="del-btn" onclick="deleteJunctionApi('${j}')">✕</button>
+                    </div>`;
+                }
+                html += '</div>';
+            }
 
             if (allWalkways.length > 0) {
                 html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
@@ -847,6 +996,23 @@
 
         function cancelAddNode() {
             document.getElementById('nodeForm').style.display = 'none';
+            pendingLat = pendingLng = null;
+        }
+
+        function confirmAddJunction() {
+            const name = document.getElementById('junctionNameInput').value.trim();
+            if (name && pendingLat !== null && pendingLng !== null) {
+                addJunctionApi(name, pendingLat, pendingLng);
+            } else {
+                showToast('Enter a name', '#e53e3e');
+                return;
+            }
+            document.getElementById('junctionForm').style.display = 'none';
+            pendingLat = pendingLng = null;
+        }
+
+        function cancelAddJunction() {
+            document.getElementById('junctionForm').style.display = 'none';
             pendingLat = pendingLng = null;
         }
 

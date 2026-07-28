@@ -30,6 +30,7 @@ def _point_to_segment_distance(px, py, ax, ay, bx, by):
 class Navigator:
     def __init__(self):
         self._nodes = {}
+        self._junctions = {}
         self._walkways = []
         self.hash_table = _NodeHashTable(self._nodes)
         self.building_info = BuildingHashTable()
@@ -54,6 +55,27 @@ class Navigator:
         if new_name is not None and new_name != name:
             self._nodes[new_name] = self._nodes.pop(name)
 
+    def add_junction(self, name, lat, lng):
+        self._junctions[name] = {"lat": lat, "lng": lng}
+
+    def remove_junction(self, name):
+        self._junctions.pop(name, None)
+        for w in self._walkways:
+            w["points"] = [p for p in w["points"] if p != name]
+
+    def update_junction(self, name, lat=None, lng=None, new_name=None):
+        if name not in self._junctions:
+            return
+        jct = self._junctions[name]
+        if lat is not None:
+            jct["lat"] = lat
+        if lng is not None:
+            jct["lng"] = lng
+        if new_name is not None and new_name != name:
+            self._junctions[new_name] = self._junctions.pop(name)
+            for w in self._walkways:
+                w["points"] = [new_name if p == name else p for p in w["points"]]
+
     def add_walkway(self, points, name=None):
         if not name:
             name = f"W{len(self._walkways) + 1}"
@@ -71,85 +93,127 @@ class Navigator:
     def _walkway_length(self, points):
         total = 0
         for i in range(len(points) - 1):
-            total += self._haversine_coords(
-                points[i][0], points[i][1],
-                points[i + 1][0], points[i + 1][1],
-            )
+            p1 = self._resolve_point(points[i])
+            p2 = self._resolve_point(points[i + 1])
+            if p1 and p2:
+                total += self._haversine_coords(p1[0], p1[1], p2[0], p2[1])
         return round(total, 1)
+
+    def _resolve_point(self, point):
+        if isinstance(point, list) and len(point) == 2:
+            return (point[0], point[1])
+        if isinstance(point, str):
+            if point in self._junctions:
+                j = self._junctions[point]
+                return (j["lat"], j["lng"])
+        return None
 
     def _snap_to_walkway(self, lat, lng):
         best_dist = float("inf")
         best_point = None
-        best_walkway = None
-        best_seg_idx = 0
         for w in self._walkways:
             pts = w["points"]
             for i in range(len(pts) - 1):
-                d, cx, cy = _point_to_segment_distance(
-                    lat, lng, pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1]
-                )
+                p1 = self._resolve_point(pts[i])
+                p2 = self._resolve_point(pts[i + 1])
+                if not p1 or not p2:
+                    continue
+                d, cx, cy = _point_to_segment_distance(lat, lng, p1[0], p1[1], p2[0], p2[1])
                 if d < best_dist:
                     best_dist = d
                     best_point = (cx, cy)
-                    best_walkway = w["name"]
-                    best_seg_idx = i
-        return best_dist, best_point, best_walkway, best_seg_idx
+        return best_dist, best_point
 
     def _build_graph(self):
         g = Graph()
 
-        walkway_nodes = {}
-        node_counter = [0]
+        walkway_node_positions = {}
 
         for w in self._walkways:
             pts = w["points"]
             for i in range(len(pts) - 1):
-                p1 = pts[i]
-                p2 = pts[i + 1]
+                p1 = self._resolve_point(pts[i])
+                p2 = self._resolve_point(pts[i + 1])
+                if not p1 or not p2:
+                    continue
                 key1 = f"_w_{w['name']}_{i}"
                 key2 = f"_w_{w['name']}_{i + 1}"
-                if key1 not in walkway_nodes:
-                    walkway_nodes[key1] = {"lat": p1[0], "lng": p1[1]}
+                if key1 not in walkway_node_positions:
+                    walkway_node_positions[key1] = p1
                     g.add_vertex(key1)
-                if key2 not in walkway_nodes:
-                    walkway_nodes[key2] = {"lat": p2[0], "lng": p2[1]}
+                if key2 not in walkway_node_positions:
+                    walkway_node_positions[key2] = p2
                     g.add_vertex(key2)
                 d = self._haversine_coords(p1[0], p1[1], p2[0], p2[1])
                 g.add_edge(key1, key2, d)
 
+        for jname, jct in self._junctions.items():
+            g.add_vertex(jname)
+            for w in self._walkways:
+                pts = w["points"]
+                for i in range(len(pts) - 1):
+                    if pts[i] == jname or pts[i + 1] == jname:
+                        continue
+                    p1 = self._resolve_point(pts[i])
+                    p2 = self._resolve_point(pts[i + 1])
+                    if not p1 or not p2:
+                        continue
+                    d, cx, cy = _point_to_segment_distance(jct["lat"], jct["lng"], p1[0], p1[1], p2[0], p2[1])
+                    if d < 0.0001:
+                        wk_key1 = f"_w_{w['name']}_{i}"
+                        wk_key2 = f"_w_{w['name']}_{i + 1}"
+                        g.add_edge(jname, wk_key1, 0)
+                        g.add_edge(jname, wk_key2, 0)
+
         for nname, node in self._nodes.items():
             g.add_vertex(nname)
-            _, snap_point, _, _ = self._snap_to_walkway(node["lat"], node["lng"])
-            if snap_point:
+
+            best_jct = None
+            best_jct_dist = float("inf")
+            for jname, jct in self._junctions.items():
+                d = self._haversine_coords(node["lat"], node["lng"], jct["lat"], jct["lng"])
+                if d < best_jct_dist:
+                    best_jct_dist = d
+                    best_jct = jname
+
+            _, snap_point = self._snap_to_walkway(node["lat"], node["lng"])
+
+            if best_jct and snap_point:
+                jct = self._junctions[best_jct]
+                jct_to_snap = self._haversine_coords(jct["lat"], jct["lng"], snap_point[0], snap_point[1])
+                if best_jct_dist <= jct_to_snap + 50:
+                    g.add_edge(nname, best_jct, best_jct_dist)
+                else:
+                    snap_key = f"_snap_{nname}"
+                    g.add_vertex(snap_key)
+                    walkway_node_positions[snap_key] = snap_point
+                    g.add_edge(nname, snap_key, self._haversine_coords(node["lat"], node["lng"], snap_point[0], snap_point[1]))
+                    self._connect_snap_to_walkway(g, snap_key, snap_point, w=None)
+            elif best_jct:
+                g.add_edge(nname, best_jct, best_jct_dist)
+            elif snap_point:
                 snap_key = f"_snap_{nname}"
                 g.add_vertex(snap_key)
-                walkway_nodes[snap_key] = {"lat": snap_point[0], "lng": snap_point[1]}
-                d = self._haversine_coords(
-                    node["lat"], node["lng"], snap_point[0], snap_point[1]
-                )
-                g.add_edge(nname, snap_key, d)
-
-                nearest_wk = None
-                nearest_dist = float("inf")
-                for w in self._walkways:
-                    pts = w["points"]
-                    for i in range(len(pts) - 1):
-                        sd, _, _ = _point_to_segment_distance(
-                            snap_point[0], snap_point[1],
-                            pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1]
-                        )
-                        if sd < nearest_dist:
-                            nearest_dist = sd
-                            nearest_wk = w
-                            nearest_seg = i
-
-                if nearest_wk and nearest_dist < 0.0001:
-                    wk_key1 = f"_w_{nearest_wk['name']}_{nearest_seg}"
-                    wk_key2 = f"_w_{nearest_wk['name']}_{nearest_seg + 1}"
-                    g.add_edge(snap_key, wk_key1, 0)
-                    g.add_edge(snap_key, wk_key2, 0)
+                walkway_node_positions[snap_key] = snap_point
+                g.add_edge(nname, snap_key, self._haversine_coords(node["lat"], node["lng"], snap_point[0], snap_point[1]))
+                self._connect_snap_to_walkway(g, snap_key, snap_point)
 
         return g
+
+    def _connect_snap_to_walkway(self, g, snap_key, snap_point, w=None):
+        for walkway in self._walkways:
+            pts = walkway["points"]
+            for i in range(len(pts) - 1):
+                p1 = self._resolve_point(pts[i])
+                p2 = self._resolve_point(pts[i + 1])
+                if not p1 or not p2:
+                    continue
+                sd, _, _ = _point_to_segment_distance(snap_point[0], snap_point[1], p1[0], p1[1], p2[0], p2[1])
+                if sd < 0.0001:
+                    wk_key1 = f"_w_{walkway['name']}_{i}"
+                    wk_key2 = f"_w_{walkway['name']}_{i + 1}"
+                    g.add_edge(snap_key, wk_key1, 0)
+                    g.add_edge(snap_key, wk_key2, 0)
 
     def shortest_path(self, start, end):
         if start not in self._nodes or end not in self._nodes:
@@ -164,12 +228,15 @@ class Navigator:
     def get_state(self):
         return {
             "nodes": dict(self._nodes),
+            "junctions": dict(self._junctions),
             "walkways": list(self._walkways),
         }
 
     def load_state(self, data):
         self._nodes.clear()
         self._nodes.update(data.get("nodes", {}))
+        self._junctions.clear()
+        self._junctions.update(data.get("junctions", {}))
         self._walkways.clear()
         self._walkways.extend(data.get("walkways", []))
 
