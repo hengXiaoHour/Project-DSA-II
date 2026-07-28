@@ -17,7 +17,7 @@ def _load_state():
     if os.path.exists(path):
         with open(path) as f:
             data = json.load(f)
-            if data.get("nodes") or data.get("walkways"):
+            if data.get("nodes") or data.get("walkways") or data.get("junctions"):
                 nav.load_state(data)
                 return True
     return False
