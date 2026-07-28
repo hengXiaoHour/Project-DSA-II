@@ -1,0 +1,141 @@
+{
+  "nodes": {
+    "Building A": {
+      "category": "Academic",
+      "lat": 11.569518107457732,
+      "lng": 104.89282608032228
+    },
+    "Building B": {
+      "category": "Academic",
+      "lat": 11.567790600047067,
+      "lng": 104.88973617553712
+    },
+    "Building C": {
+      "category": "Academic",
+      "lat": 11.570184061188359,
+      "lng": 104.89102363586427
+    },
+    "Building D": {
+      "category": "Academic",
+      "lat": 11.569421808812454,
+      "lng": 104.88914608955385
+    },
+    "Building Stem": {
+      "category": "Academic",
+      "lat": 11.56817072576732,
+      "lng": 104.89265441894531
+    },
+    "Building T": {
+      "category": "Academic",
+      "lat": 11.567453929672975,
+      "lng": 104.88857746124269
+    },
+    "CKCC": {
+      "category": "Academic",
+      "lat": 11.5688434225009,
+      "lng": 104.893856048584
+    },
+    "Canteen": {
+      "category": "Service",
+      "lat": 11.568797591877786,
+      "lng": 104.89059984683992
+    },
+    "Entrance": {
+      "category": "Access Point",
+      "lat": 11.570328468632843,
+      "lng": 104.89180684089662
+    },
+    "Library": {
+      "category": "Service",
+      "lat": 11.568371491891561,
+      "lng": 104.88918900489807
+    },
+    "NICC": {
+      "category": "Service",
+      "lat": 11.569013441851139,
+      "lng": 104.88848090171814
+    },
+    "Study Office": {
+      "category": "Administration",
+      "lat": 11.568802341830676,
+      "lng": 104.89166736602783
+    }
+  },
+  "edges": [
+    {
+      "from": "Building A",
+      "to": "Library",
+      "weight": 60
+    },
+    {
+      "from": "Building A",
+      "to": "Building Stem",
+      "weight": 230
+    },
+    {
+      "from": "Library",
+      "to": "NICC",
+      "weight": 60
+    },
+    {
+      "from": "Library",
+      "to": "CKCC",
+      "weight": 100
+    },
+    {
+      "from": "Library",
+      "to": "Building D",
+      "weight": 240
+    },
+    {
+      "from": "Library",
+      "to": "Building Stem",
+      "weight": 240
+    },
+    {
+      "from": "NICC",
+      "to": "CKCC",
+      "weight": 80
+    },
+    {
+      "from": "Building D",
+      "to": "CKCC",
+      "weight": 64
+    },
+    {
+      "from": "Building B",
+      "to": "Building D",
+      "weight": 50
+    },
+    {
+      "from": "Building D",
+      "to": "Building Stem",
+      "weight": 50
+    },
+    {
+      "from": "Study Office",
+      "to": "Building Stem",
+      "weight": 85
+    },
+    {
+      "from": "Study Office",
+      "to": "Canteen",
+      "weight": 60
+    },
+    {
+      "from": "Building C",
+      "to": "Building T",
+      "weight": 40
+    },
+    {
+      "from": "Building C",
+      "to": "Canteen",
+      "weight": 90
+    },
+    {
+      "from": "Building T",
+      "to": "Canteen",
+      "weight": 90
+    }
+  ]
+}

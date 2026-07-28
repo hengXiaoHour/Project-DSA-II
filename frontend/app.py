@@ -5,12 +5,17 @@ from src.navigation import Navigator
 
 app = Flask(__name__)
 nav = Navigator()
-STATE_FILE = os.path.join(os.path.dirname(__file__), "..", "doc", "sample_campus.json")
+STATE_FILE = os.path.join(os.path.dirname(__file__), "..", "doc", "state.json")
+
+
+def _get_state_path():
+    return app.config.get("STATE_FILE", STATE_FILE)
 
 
 def _load_state():
-    if os.path.exists(STATE_FILE):
-        with open(STATE_FILE) as f:
+    path = _get_state_path()
+    if os.path.exists(path):
+        with open(path) as f:
             data = json.load(f)
             if data.get("nodes"):
                 nav.load_state(data)
@@ -19,8 +24,9 @@ def _load_state():
 
 
 def _save_state():
-    os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
-    with open(STATE_FILE, "w") as f:
+    path = _get_state_path()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
         json.dump(nav.get_state(), f, indent=2)
 
 
@@ -88,7 +94,8 @@ def add_edge():
     if not from_name or not to_name:
         return jsonify({"error": "from and to are required"}), 400
     weight = data.get("weight")
-    ok = nav.add_edge(from_name, to_name, weight)
+    path = data.get("path")
+    ok = nav.add_edge(from_name, to_name, weight, path)
     if not ok:
         return jsonify({"error": "Both nodes must exist"}), 400
     _save_state()
@@ -114,18 +121,10 @@ def find_path():
     data = request.json
     start = data.get("start")
     end = data.get("end")
-    algorithm = data.get("algorithm", "dijkstra")
-
-    if algorithm == "bfs":
-        path, cost = nav.bfs(start, end)
-    elif algorithm == "dfs":
-        path, cost = nav.dfs(start, end)
-    else:
-        path, cost = nav.shortest_path(start, end)
-
+    path, cost = nav.shortest_path(start, end)
     if path:
-        return jsonify({"path": path, "cost": cost, "algorithm": algorithm})
-    return jsonify({"path": None, "cost": None, "algorithm": algorithm, "error": "No path found"}), 404
+        return jsonify({"path": path, "cost": cost, "algorithm": "dijkstra"})
+    return jsonify({"path": None, "cost": None, "algorithm": "dijkstra", "error": "No path found"}), 404
 
 
 @app.route("/api/graph", methods=["GET"])
@@ -151,8 +150,76 @@ def get_sample():
 
 @app.route("/api/graph/save", methods=["POST"])
 def save_graph():
+    state = nav.get_state()
     _save_state()
-    return jsonify({"status": "ok", "path": os.path.abspath(STATE_FILE)})
+    num_nodes = len(state.get("nodes", {}))
+    num_edges = len(state.get("edges", []))
+    num_paths = sum(1 for e in state.get("edges", []) if e.get("path"))
+    return jsonify({
+        "status": "ok",
+        "path": os.path.abspath(STATE_FILE),
+        "nodes": num_nodes,
+        "edges": num_edges,
+        "paths": num_paths,
+    })
+
+
+@app.route("/api/buildings", methods=["GET"])
+def list_buildings():
+    buildings = []
+    for info in nav.building_info.get_all_buildings():
+        buildings.append({
+            "name": info.name,
+            "category": info.category,
+            "description": info.description,
+            "services": info.services,
+        })
+    return jsonify(buildings)
+
+
+@app.route("/api/buildings/<name>", methods=["GET"])
+def get_building(name):
+    info = nav.building_info.search(name)
+    if not info:
+        return jsonify({"error": "Building not found"}), 404
+    return jsonify({
+        "name": info.name,
+        "category": info.category,
+        "description": info.description,
+        "services": info.services,
+    })
+
+
+@app.route("/api/categories", methods=["GET"])
+def list_categories():
+    cats = []
+    for cat in nav.category_tree.get_categories():
+        buildings = nav.category_tree.get_buildings_in_category(cat)
+        cats.append({"name": cat, "buildings": buildings})
+    return jsonify(cats)
+
+
+@app.route("/api/tree/traversal/<traversal_type>", methods=["GET"])
+def tree_traversal(traversal_type):
+    if traversal_type == "pre":
+        lines = nav.category_tree.pre_order()
+    elif traversal_type == "post":
+        lines = nav.category_tree.post_order()
+    elif traversal_type == "level":
+        lines = nav.category_tree.level_order()
+    else:
+        return jsonify({"error": "Invalid traversal type"}), 400
+    return jsonify({"type": traversal_type, "lines": lines})
+
+
+@app.route("/api/adjacency", methods=["GET"])
+def get_adjacency():
+    state = nav.get_state()
+    adj = {name: [] for name in state.get("nodes", {})}
+    for e in state.get("edges", []):
+        adj.setdefault(e["from"], []).append({"to": e["to"], "weight": e["weight"]})
+        adj.setdefault(e["to"], []).append({"to": e["from"], "weight": e["weight"]})
+    return jsonify(adj)
 
 
 if __name__ == "__main__":

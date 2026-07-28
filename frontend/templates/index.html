@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graph Editor + Navigator</title>
+    <title>RUPP Campus Navigation System</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -52,6 +52,8 @@
         .mode-btn.danger:hover { border-color: #e53e3e; background: #fff5f5; }
         .mode-btn.green.active { border-color: #38a169; background: #38a169; color: white; }
         .mode-btn.green:hover { border-color: #38a169; background: #f0fff4; }
+        .mode-btn.orange.active { border-color: #d69e2e; background: #d69e2e; color: white; }
+        .mode-btn.orange:hover { border-color: #d69e2e; background: #fffff0; }
 
         .sep { width: 1px; height: 24px; background: #e2e8f0; margin: 0 6px; }
 
@@ -190,6 +192,47 @@
         .toast.show { opacity: 1; }
         .toast.error { background: #e53e3e; }
 
+        .right-panel .info-card { flex: 1; overflow-y: auto; min-height: 0; }
+        .tab-bar { display: flex; gap: 2px; flex-shrink: 0; }
+        .tab-btn {
+            flex: 1; padding: 5px 4px; border: none; border-radius: 6px 6px 0 0;
+            font-size: 9px; font-weight: 700; cursor: pointer; color: #a0aec0;
+            background: transparent; transition: all 0.15s; text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .tab-btn:hover { color: #4a5568; background: #edf2f7; }
+        .tab-btn.active { color: #4299e1; background: white; box-shadow: 0 -2px 0 #4299e1; }
+        .tab-content { flex: 1; overflow-y: auto; min-height: 0; }
+        .tab-content.hidden { display: none; }
+        .complexity-badge {
+            display: inline-block; margin-top: 6px; padding: 2px 8px;
+            background: #ebf8ff; color: #4299e1; border-radius: 4px;
+            font-size: 9px; font-weight: 700; border: 1px solid #bee3f8;
+        }
+        .traversal-bar { display: flex; gap: 2px; margin-bottom: 6px; }
+        .traversal-btn {
+            padding: 3px 8px; border: 2px solid #e2e8f0; border-radius: 4px;
+            background: #f7fafc; font-size: 9px; font-weight: 600; cursor: pointer;
+            color: #4a5568; transition: all 0.15s;
+        }
+        .traversal-btn:hover { border-color: #4299e1; background: #ebf8ff; }
+        .traversal-btn.active { border-color: #4299e1; background: #4299e1; color: white; }
+        .info-box {
+            background: #f7fafc; border-radius: 6px; padding: 8px;
+            font-size: 10px; color: #2d3748; margin-top: 6px;
+        }
+        .info-box .row { padding: 2px 0; }
+        .info-box .label { font-weight: 700; color: #718096; }
+        .info-box .service-tag {
+            display: inline-block; background: #ebf8ff; color: #2b6cb0;
+            padding: 1px 6px; border-radius: 3px; font-size: 9px; margin: 1px 2px 1px 0;
+        }
+        .adj-item {
+            padding: 4px 0; border-bottom: 1px solid #f7fafc; font-size: 10px;
+        }
+        .adj-item .vtx { font-weight: 700; color: #2d3748; }
+        .adj-item .edge { color: #718096; margin-left: 8px; }
+        .adj-item .edge .w { color: #38a169; font-weight: 600; }
         .node-label {
             background: transparent !important;
             border: none !important;
@@ -226,7 +269,8 @@
             <button class="mode-btn" data-mode="select" onclick="setMode('select')">Move</button>
             <button class="mode-btn green" data-mode="add-node" onclick="setMode('add-node')">+Node</button>
             <button class="mode-btn green" data-mode="add-edge" onclick="setMode('add-edge')">+Edge</button>
-            <button class="mode-btn danger" data-mode="delete" onclick="setMode('delete')">Delete</button>
+            <button class="mode-btn danger" data-mode="delete-node" onclick="setMode('delete-node')">Del Node</button>
+            <button class="mode-btn orange" data-mode="delete-edge" onclick="setMode('delete-edge')">Del Edge</button>
         </div>
         <div class="sep"></div>
         <div class="nav-group" id="navGroup">
@@ -234,11 +278,7 @@
             <select id="startSelect"></select>
             <label>To</label>
             <select id="endSelect"></select>
-            <div class="radio-group">
-                <label><input type="radio" name="algo" value="bfs"> BFS</label>
-                <label><input type="radio" name="algo" value="dfs"> DFS</label>
-                <label><input type="radio" name="algo" value="dijkstra" checked> Dijkstra</label>
-            </div>
+            <span style="font-size:10px;font-weight:700;color:#4299e1;padding:3px 8px;border:2px solid #4299e1;border-radius:6px;">DIJKSTRA</span>
             <button class="btn" onclick="findPath()">Go</button>
         </div>
         <div class="sep"></div>
@@ -261,13 +301,38 @@
             <div class="hint-bar" id="hintBar">Mode: <strong>Move</strong> — drag nodes around</div>
         </div>
         <div class="right-panel">
-            <div class="info-card">
-                <h3>Nodes <span id="nodeCount" style="font-weight:400;color:#a0aec0;">(0)</span></h3>
-                <div id="nodeList"></div>
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="nodes" onclick="switchTab('nodes')">Nodes</button>
+                <button class="tab-btn" data-tab="info" onclick="switchTab('info')">Info</button>
+                <button class="tab-btn" data-tab="tree" onclick="switchTab('tree')">Tree</button>
+                <button class="tab-btn" data-tab="graph" onclick="switchTab('graph')">Graph</button>
             </div>
-            <div class="info-card" style="flex:0.6;">
-                <h3>Tree</h3>
-                <div id="treeDisplay" style="font-size:10px;color:#4a5568;font-family:monospace;">Empty</div>
+            <div class="info-card">
+                <div class="tab-content" id="tab-nodes">
+                    <h3>Nodes <span id="nodeCount" style="font-weight:400;color:#a0aec0;">(0)</span></h3>
+                    <div id="nodeList"></div>
+                </div>
+                <div class="tab-content hidden" id="tab-info">
+                    <h3>Building Info</h3>
+                    <select id="buildingSelect" onchange="loadBuildingInfo()" style="width:100%;padding:4px 6px;border:2px solid #e2e8f0;border-radius:6px;font-size:10px;margin-bottom:4px;">
+                        <option value="">Select a building...</option>
+                    </select>
+                    <div id="buildingInfo"><div style="font-size:10px;color:#a0aec0;">Choose a building above.</div></div>
+                    <div class="complexity-badge">O(1) Hash Table Lookup</div>
+                </div>
+                <div class="tab-content hidden" id="tab-tree">
+                    <h3>Category Tree</h3>
+                    <div class="traversal-bar">
+                        <button class="traversal-btn active" data-trav="pre" onclick="loadTree('pre')">Pre-order</button>
+                        <button class="traversal-btn" data-trav="post" onclick="loadTree('post')">Post-order</button>
+                        <button class="traversal-btn" data-trav="level" onclick="loadTree('level')">Level-order</button>
+                    </div>
+                    <div id="treeDisplay" style="font-size:10px;color:#4a5568;font-family:monospace;white-space:pre-wrap;"></div>
+                </div>
+                <div class="tab-content hidden" id="tab-graph">
+                    <h3>Adjacency List</h3>
+                    <div id="adjDisplay"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -290,6 +355,8 @@
         let map, markers = {}, edgeLines = [], pathLine = null;
         let mode = 'select';
         let edgeSource = null;
+        let edgeWaypoints = [];
+        let tempEdgeLayers = [];
         let pendingLat = null, pendingLng = null;
         let allNodes = {}, allEdges = [];
 
@@ -308,7 +375,7 @@
 
             L.control.zoom({ position: 'bottomright' }).addTo(map);
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') cancelAddNode();
+                if (e.key === 'Escape') { cancelAddNode(); clearTempEdge(); }
             });
             map.on('click', function(e) {
                 if (mode === 'add-node') {
@@ -318,7 +385,24 @@
                     document.getElementById('nodeNameInput').value = '';
                     setTimeout(() => document.getElementById('nodeNameInput').focus(), 100);
                 } else if (mode === 'add-edge') {
-                    showToast('Click a node first, then another node', '#d69e2e');
+                    if (edgeSource) {
+                        edgeWaypoints.push([e.latlng.lat, e.latlng.lng]);
+                        const dot = L.circleMarker([e.latlng.lat, e.latlng.lng], {
+                            radius: 3, color: '#d69e2e', fillColor: '#d69e2e', fillOpacity: 1
+                        }).addTo(map);
+                        tempEdgeLayers.push(dot);
+                        const coords = [markers[edgeSource].getLatLng(), ...edgeWaypoints];
+                        if (tempEdgeLayers.length > 0) {
+                            const prevLine = tempEdgeLayers.find(l => l._isTempLine);
+                            if (prevLine) { map.removeLayer(prevLine); tempEdgeLayers = tempEdgeLayers.filter(l => l !== prevLine); }
+                        }
+                        const line = L.polyline(coords, { color: '#d69e2e', weight: 2, dashArray: '5,5' }).addTo(map);
+                        line._isTempLine = true;
+                        tempEdgeLayers.push(line);
+                        showToast(`Waypoint added (${edgeWaypoints.length}). Click target node to finish.`, '#d69e2e');
+                    } else {
+                        showToast('Click a source node first', '#d69e2e');
+                    }
                 }
             });
 
@@ -326,9 +410,17 @@
             setTimeout(() => map.invalidateSize(), 200);
         }
 
-        function setMode(newMode) {
-            mode = newMode;
+        function clearTempEdge() {
+            tempEdgeLayers.forEach(l => { try { map.removeLayer(l); } catch(e) {} });
+            tempEdgeLayers = [];
+            edgeWaypoints = [];
+            if (edgeSource && markers[edgeSource]) markers[edgeSource].setIcon(makePinIcon('#4299e1'));
             edgeSource = null;
+        }
+
+        function setMode(newMode) {
+            clearTempEdge();
+            mode = newMode;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             const btn = document.querySelector(`.mode-btn[data-mode="${newMode}"]`);
             if (btn) btn.classList.add('active');
@@ -336,8 +428,9 @@
             const hints = {
                 'select': 'Mode: <strong>Move</strong> — drag nodes around',
                 'add-node': 'Mode: <strong>+Node</strong> — click anywhere on the map to add a node',
-                'add-edge': 'Mode: <strong>+Edge</strong> — click a node (source), then click another (target)',
-                'delete': 'Mode: <strong>Delete</strong> — click a node or edge to remove it'
+                'add-edge': 'Mode: <strong>+Edge</strong> — click source node, click waypoints on map, then click target node',
+                'delete-node': 'Mode: <strong>Del Node</strong> — click a node to remove it and its edges',
+                'delete-edge': 'Mode: <strong>Del Edge</strong> — click an edge line to remove it'
             };
             document.getElementById('hintBar').innerHTML = hints[newMode] || '';
 
@@ -376,11 +469,13 @@
             .catch(() => showToast('Error deleting node', '#e53e3e'));
         }
 
-        function addEdgeApi(from, to) {
+        function addEdgeApi(from, to, path) {
+            const body = { from, to };
+            if (path && path.length > 0) body.path = path;
             fetch('/api/edges', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ from, to })
+                body: JSON.stringify(body)
             })
             .then(r => r.json())
             .then(data => {
@@ -413,7 +508,6 @@
                 allEdges = state.edges || [];
                 renderGraph();
                 renderSidebar();
-                renderTree();
             })
             .catch(() => {});
         }
@@ -442,20 +536,30 @@
             for (const e of allEdges) {
                 const a = allNodes[e.from], b = allNodes[e.to];
                 if (!a || !b) continue;
-                const line = L.polyline([[a.lat, a.lng], [b.lat, b.lng]], {
-                    color: '#a0aec0', weight: 2, opacity: 0.8
+                let coords;
+                if (e.path && e.path.length > 0) {
+                    coords = [[a.lat, a.lng], ...e.path, [b.lat, b.lng]];
+                } else {
+                    coords = [[a.lat, a.lng], [b.lat, b.lng]];
+                }
+                const clickLayer = L.polyline(coords, {
+                    color: 'transparent', weight: 20, opacity: 0, interactive: true
                 }).addTo(map);
-                line._from = e.from;
-                line._to = e.to;
-                line.bindTooltip(e.weight + 'm', { permanent: true, direction: 'center', className: 'edge-label' });
-                line.on('click', function() {
-                    if (mode === 'delete') {
+                clickLayer._from = e.from;
+                clickLayer._to = e.to;
+                clickLayer.on('click', function() {
+                    if (mode === 'delete-edge') {
                         if (confirm(`Delete edge ${e.from} ↔ ${e.to}?`)) {
                             deleteEdgeApi(e.from, e.to);
                         }
                     }
                 });
-                edgeLines.push(line);
+                edgeLines.push(clickLayer);
+                const visual = L.polyline(coords, {
+                    color: '#a0aec0', weight: 3, opacity: 0.7, interactive: false
+                }).addTo(map);
+                visual.bindTooltip(e.weight + 'm', { sticky: true, direction: 'center', className: 'edge-label' });
+                edgeLines.push(visual);
             }
 
             updateSelects();
@@ -488,22 +592,22 @@
 
             m._nodeName = name;
             m.on('click', function() {
-                if (mode === 'delete') {
-                    if (confirm(`Delete node "${name}"?`)) {
+                if (mode === 'delete-node') {
+                    if (confirm(`Delete node "${name}" and its edges?`)) {
                         deleteNodeApi(name);
                     }
                 } else if (mode === 'add-edge') {
                     if (!edgeSource) {
                         edgeSource = name;
                         this.setIcon(makePinIcon('#d69e2e'));
-                        showToast(`Source: ${name} — now click the target node`, '#d69e2e');
+                        showToast('Click waypoints on the map, then click target node', '#d69e2e');
                     } else if (edgeSource === name) {
-                        edgeSource = null;
+                        clearTempEdge();
                         loadGraphFromApi();
                         showToast('Cancelled');
                     } else {
-                        addEdgeApi(edgeSource, name);
-                        edgeSource = null;
+                        addEdgeApi(edgeSource, name, edgeWaypoints);
+                        clearTempEdge();
                         loadGraphFromApi();
                     }
                 } else if (mode === 'add-node') {
@@ -531,7 +635,7 @@
             const list = document.getElementById('nodeList');
             const names = Object.keys(allNodes).sort();
             document.getElementById('nodeCount').textContent = `(${names.length})`;
-            list.innerHTML = names.map(n => {
+            let html = names.map(n => {
                 const d = allNodes[n];
                 const cat = d.category || 'Uncategorized';
                 return `<div class="node-row">
@@ -539,24 +643,102 @@
                     <button class="del-btn" onclick="deleteNodeApi('${n}')">✕</button>
                 </div>`;
             }).join('');
+            if (allEdges.length > 0) {
+                html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
+                html += '<span style="font-size:9px;font-weight:700;color:#718096;">EDGES</span>';
+                for (const e of allEdges) {
+                    html += `<div class="node-row">
+                        <span style="font-size:9px;"><span class="node-name">${e.from}</span> ↔ <span class="node-name">${e.to}</span> <span style="color:#38a169;font-weight:600;">${e.weight}m</span></span>
+                        <button class="del-btn" onclick="deleteEdgeApi('${e.from}','${e.to}')">✕</button>
+                    </div>`;
+                }
+                html += '</div>';
+            }
+            list.innerHTML = html;
         }
 
-        function renderTree() {
-            const cats = {};
-            for (const [name, data] of Object.entries(allNodes)) {
-                const cat = data.category || 'Uncategorized';
-                if (!cats[cat]) cats[cat] = [];
-                cats[cat].push(name);
-            }
-            const div = document.getElementById('treeDisplay');
-            const keys = Object.keys(cats).sort();
-            if (keys.length === 0) {
-                div.textContent = 'Empty';
+        function switchTab(name) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.tab-btn[data-tab="${name}"]`).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById('tab-' + name).classList.remove('hidden');
+            if (name === 'info') loadBuildingList();
+            if (name === 'tree') loadTree('pre');
+            if (name === 'graph') loadAdjacency();
+        }
+
+        function loadBuildingList() {
+            fetch('/api/buildings')
+            .then(r => r.json())
+            .then(data => {
+                const sel = document.getElementById('buildingSelect');
+                const cur = sel.value;
+                sel.innerHTML = '<option value="">Select a building...</option>'
+                    + data.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+                if (cur) sel.value = cur;
+            })
+            .catch(() => {});
+        }
+
+        function loadBuildingInfo() {
+            const name = document.getElementById('buildingSelect').value;
+            const div = document.getElementById('buildingInfo');
+            if (!name) {
+                div.innerHTML = '<div style="font-size:10px;color:#a0aec0;">Choose a building above.</div>';
                 return;
             }
-            div.innerHTML = 'My Campus\n' + keys.map(c => {
-                return '└── ' + c + '\n' + cats[c].sort().map(n => '    ├── ' + n).join('\n');
-            }).join('\n');
+            fetch('/api/buildings/' + encodeURIComponent(name))
+            .then(r => r.json())
+            .then(d => {
+                if (d.error) { div.innerHTML = '<div style="font-size:10px;color:#e53e3e;">Not found.</div>'; return; }
+                div.innerHTML = `<div class="info-box">
+                    <div class="row"><span class="label">Name:</span> ${d.name}</div>
+                    <div class="row"><span class="label">Category:</span> ${d.category}</div>
+                    <div class="row"><span class="label">Description:</span> ${d.description}</div>
+                    <div class="row"><span class="label">Services:</span> ${d.services.map(s => '<span class="service-tag">' + s + '</span>').join('')}</div>
+                </div>`;
+            })
+            .catch(() => {});
+        }
+
+        function loadTree(type) {
+            document.querySelectorAll('.traversal-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.traversal-btn[data-trav="${type}"]`).classList.add('active');
+            fetch('/api/tree/traversal/' + type)
+            .then(r => r.json())
+            .then(d => {
+                const div = document.getElementById('treeDisplay');
+                div.innerHTML = d.lines.map(l => '  ' + l).join('<br>');
+            })
+            .catch(() => {});
+        }
+
+        function loadAdjacency() {
+            const div = document.getElementById('adjDisplay');
+            const names = Object.keys(allNodes).sort();
+            if (names.length === 0) { div.innerHTML = '<div style="font-size:10px;color:#a0aec0;">No nodes.</div>'; return; }
+
+            const adj = {};
+            for (const name of names) adj[name] = [];
+            for (const e of allEdges) {
+                if (adj[e.from]) adj[e.from].push({ to: e.to, weight: e.weight });
+                if (adj[e.to]) adj[e.to].push({ to: e.from, weight: e.weight });
+            }
+
+            let html = `<span style="font-size:10px;color:#718096;display:block;margin-bottom:4px;">${names.length} nodes, ${allEdges.length} edges</span>`;
+            for (const n of names) {
+                const edges = adj[n].sort((a, b) => a.to.localeCompare(b.to));
+                if (edges.length === 0) {
+                    html += `<div class="adj-item"><span class="vtx">${n}</span></div>`;
+                    continue;
+                }
+                html += `<div class="adj-item"><span class="vtx">${n}</span></div>`;
+                for (let i = 0; i < edges.length; i++) {
+                    const conn = i === edges.length - 1 ? '└──' : '├──';
+                    html += `<div style="padding-left:12px;font-size:10px;color:#718096;">${conn} ${edges[i].to} <span class="w">${edges[i].weight}m</span></div>`;
+                }
+            }
+            div.innerHTML = html;
         }
 
         function updateSelects() {
@@ -578,7 +760,6 @@
         function findPath() {
             const start = document.getElementById('startSelect').value;
             const end = document.getElementById('endSelect').value;
-            const algo = document.querySelector('input[name="algo"]:checked').value;
             const bar = document.getElementById('resultBar');
 
             if (!start || !end) {
@@ -589,19 +770,19 @@
             fetch('/api/find_path', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ start, end, algorithm: algo })
+                body: JSON.stringify({ start, end })
             })
             .then(r => r.json())
             .then(data => {
                 if (data.path && data.path.length > 0) {
                     bar.innerHTML = `
-                        <span class="algo-badge">${(data.algorithm || algo).toUpperCase()}</span>
+                        <span class="algo-badge">DIJKSTRA</span>
                         <span class="path-text">${data.path.join(' → ')}</span>
                         <span class="cost-text">${data.cost}m</span>`;
                     highlightPath(data.path);
                     highlightPathNodes(data.path, start, end);
                 } else {
-                    bar.innerHTML = `<span class="algo-badge">${algo.toUpperCase()}</span><span class="error-text">No path found</span>`;
+                    bar.innerHTML = '<span class="algo-badge">DIJKSTRA</span><span class="error-text">No path found</span>';
                     clearHighlights();
                 }
             })
@@ -660,7 +841,10 @@
             fetch('/api/graph/save', { method: 'POST' })
             .then(r => r.json())
             .then(data => {
-                showToast(`Saved to server`);
+                const parts = [`${data.nodes} nodes`];
+                if (data.edges > 0) parts.push(`${data.edges} edges`);
+                if (data.paths > 0) parts.push(`${data.paths} with paths`);
+                showToast(`Saved: ${parts.join(', ')}`);
             })
             .catch(() => showToast('Error saving', '#e53e3e'));
         }

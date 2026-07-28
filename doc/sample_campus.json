@@ -1,158 +1,83 @@
 {
   "nodes": {
-    "RUPP Canteen": {
-      "name": "RUPP Canteen",
-      "lat": 11.568714433029692,
-      "lng": 104.89064812660219,
-      "category": "RUPP Campus"
-    },
-    "CKCC": {
-      "name": "CKCC",
-      "lat": 11.569129498025484,
-      "lng": 104.88847017288208,
-      "category": "RUPP Campus"
-    },
-    "NICC": {
-      "name": "NICC",
-      "lat": 11.568223846275401,
-      "lng": 104.88851308822632,
-      "category": "RUPP Campus"
-    },
-    "Building C": {
-      "name": "Building C",
-      "lat": 11.57022475641725,
-      "lng": 104.89094853401184,
-      "category": "RUPP Campus"
+    "Entrance": {
+      "lat": 11.561961,
+      "lng": 104.8913,
+      "category": "Access Point"
     },
     "Building A": {
-      "name": "Building A",
-      "lat": 11.568409721060968,
-      "lng": 104.89098608493806,
-      "category": "RUPP Campus"
-    },
-    "RUPP STEM Building": {
-      "name": "RUPP STEM Building",
-      "lat": 11.569615042277038,
-      "lng": 104.88997757434846,
-      "category": "RUPP Campus"
+      "lat": 11.56241,
+      "lng": 104.891208,
+      "category": "Academic"
     },
     "Library": {
-      "name": "Library",
-      "lat": 11.568312051993885,
-      "lng": 104.88923192024232,
-      "category": "RUPP Campus"
+      "lat": 11.56268,
+      "lng": 104.891438,
+      "category": "Service"
+    },
+    "Building Stem": {
+      "lat": 11.562365,
+      "lng": 104.890566,
+      "category": "Academic"
+    },
+    "NICC": {
+      "lat": 11.562949,
+      "lng": 104.891575,
+      "category": "Service"
+    },
+    "CKCC": {
+      "lat": 11.563039,
+      "lng": 104.891254,
+      "category": "Academic"
     },
     "Building D": {
-      "name": "Building D",
-      "lat": 11.568105609383494,
-      "lng": 104.8917317390442,
-      "category": "RUPP Campus"
-    },
-    "RUPP Study Office": {
-      "name": "RUPP Study Office",
-      "lat": 11.569136787702215,
-      "lng": 104.89029407501222,
-      "category": "RUPP Campus"
-    },
-    "Hun Sen Building ( Building T )": {
-      "name": "Hun Sen Building ( Building T )",
-      "lat": 11.570317609146002,
-      "lng": 104.89176928997041,
-      "category": "RUPP Campus"
+      "lat": 11.563219,
+      "lng": 104.891208,
+      "category": "Academic"
     },
     "Building B": {
-      "name": "Building B",
-      "lat": 11.56988763768796,
-      "lng": 104.88959670066835,
-      "category": "RUPP Campus"
+      "lat": 11.563129,
+      "lng": 104.890842,
+      "category": "Academic"
     },
-    "Entrance": {
-      "name": "Entrance",
-      "lat": 11.567521817572725,
-      "lng": 104.89157080650331,
-      "category": "RUPP Campus"
+    "Study Office": {
+      "lat": 11.562365,
+      "lng": 104.8902,
+      "category": "Administration"
+    },
+    "Canteen": {
+      "lat": 11.56259,
+      "lng": 104.889925,
+      "category": "Service"
+    },
+    "Building C": {
+      "lat": 11.562859,
+      "lng": 104.889741,
+      "category": "Academic"
+    },
+    "Building T": {
+      "lat": 11.562994,
+      "lng": 104.889787,
+      "category": "Academic"
     }
   },
   "edges": [
-    {
-      "from": "Building B",
-      "to": "Building D",
-      "weight": 67
-    },
-    {
-      "from": "Building B",
-      "to": "RUPP STEM Building",
-      "weight": 44
-    },
-    {
-      "from": "RUPP Study Office",
-      "to": "Building A",
-      "weight": 95
-    },
-    {
-      "from": "RUPP Study Office",
-      "to": "RUPP STEM Building",
-      "weight": 60
-    },
-    {
-      "from": "RUPP Study Office",
-      "to": "RUPP Canteen",
-      "weight": 62
-    },
-    {
-      "from": "RUPP STEM Building",
-      "to": "Building C",
-      "weight": 110
-    },
-    {
-      "from": "RUPP STEM Building",
-      "to": "Building D",
-      "weight": 75
-    },
-    {
-      "from": "NICC",
-      "to": "CKCC",
-      "weight": 25
-    },
-    {
-      "from": "Library",
-      "to": "Building A",
-      "weight": 98
-    },
-    {
-      "from": "Library",
-      "to": "CKCC",
-      "weight": 112
-    },
-    {
-      "from": "Entrance",
-      "to": "Building A",
-      "weight": 62
-    },
-    {
-      "from": "CKCC",
-      "to": "Building D",
-      "weight": 66
-    },
-    {
-      "from": "Building A",
-      "to": "RUPP Canteen",
-      "weight": 113
-    },
-    {
-      "from": "Hun Sen Building ( Building T )",
-      "to": "Building C",
-      "weight": 72
-    },
-    {
-      "from": "Hun Sen Building ( Building T )",
-      "to": "RUPP Canteen",
-      "weight": 127
-    },
-    {
-      "from": "Building C",
-      "to": "RUPP Canteen",
-      "weight": 95
-    }
+    { "from": "Entrance", "to": "Building A", "weight": 90 },
+    { "from": "Building A", "to": "Library", "weight": 60 },
+    { "from": "Building A", "to": "Building Stem", "weight": 230 },
+    { "from": "Library", "to": "NICC", "weight": 60 },
+    { "from": "Library", "to": "CKCC", "weight": 100 },
+    { "from": "Library", "to": "Building D", "weight": 240 },
+    { "from": "Library", "to": "Building Stem", "weight": 240 },
+    { "from": "NICC", "to": "CKCC", "weight": 80 },
+    { "from": "Building D", "to": "CKCC", "weight": 64 },
+    { "from": "Building B", "to": "Building D", "weight": 50 },
+    { "from": "Building B", "to": "Building Stem", "weight": 50 },
+    { "from": "Building D", "to": "Building Stem", "weight": 50 },
+    { "from": "Study Office", "to": "Building Stem", "weight": 85 },
+    { "from": "Study Office", "to": "Canteen", "weight": 60 },
+    { "from": "Building C", "to": "Building T", "weight": 40 },
+    { "from": "Building C", "to": "Canteen", "weight": 90 },
+    { "from": "Building T", "to": "Canteen", "weight": 90 }
   ]
 }
