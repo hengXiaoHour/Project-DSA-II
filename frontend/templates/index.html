@@ -234,6 +234,10 @@
             <button class="btn" onclick="findPath()">Go</button>
         </div>
         <div class="sep"></div>
+        <label style="font-size:10px;font-weight:600;color:#805ad5;display:flex;align-items:center;gap:3px;cursor:pointer;user-select:none;">
+            <input type="checkbox" id="showJunctions" onchange="toggleJunctions()" style="accent-color:#805ad5;"> Jct
+        </label>
+        <div class="sep"></div>
         <button class="btn orange" onclick="clearGraph()">Clear</button>
         <button class="btn green" onclick="saveGraph()">Save</button>
         <button class="btn orange" onclick="loadSample()">Sample</button>
@@ -324,6 +328,23 @@
         let pendingLat = null, pendingLng = null;
         let allNodes = {}, allEdges = [], allJunctions = {}, allWalkways = [];
 
+        function toggleJunctions() {
+            const show = document.getElementById('showJunctions').checked;
+            for (const m of Object.values(junctionMarkers)) {
+                if (show) m.addTo(map); else m.remove();
+            }
+        }
+
+        function showJunctionMarkers() {
+            document.getElementById('showJunctions').checked = true;
+            toggleJunctions();
+        }
+
+        function hideJunctionMarkers() {
+            document.getElementById('showJunctions').checked = false;
+            toggleJunctions();
+        }
+
         function init() {
             map = L.map('map', {
                 center: [11.5625, 104.8913],
@@ -393,7 +414,14 @@
                 'delete-junction': 'Mode: <strong>Del Jct</strong> — click a junction to remove it',
                 'delete-walkway': 'Mode: <strong>Del Walkway</strong> — click a walkway line to remove it'
             };
-            document.getElementById('hintBar').innerHTML = hints[newMode] || '';
+            document.getElementById('hintBar').innerHTML =             hints[newMode] || '';
+
+            const jctModes = ['add-junction', 'add-walkway', 'delete-junction', 'delete-walkway'];
+            if (jctModes.includes(newMode)) {
+                showJunctionMarkers();
+            } else {
+                hideJunctionMarkers();
+            }
 
             for (const [name, m] of Object.entries(markers)) {
                 if (mode === 'select') {
@@ -573,6 +601,10 @@
 
             for (const [jname, jct] of Object.entries(allJunctions)) {
                 createJunctionMarker(jname, jct);
+            }
+
+            if (!document.getElementById('showJunctions').checked) {
+                for (const m of Object.values(junctionMarkers)) m.remove();
             }
 
             updateSelects();
