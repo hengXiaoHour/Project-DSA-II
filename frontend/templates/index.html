@@ -388,7 +388,7 @@
                 'select': 'Mode: <strong>Move</strong> — drag nodes around',
                 'add-node': 'Mode: <strong>+Node</strong> — click on the map to place a building',
                 'add-junction': 'Mode: <strong>+Jct</strong> — click on the map to place a junction point',
-                'add-walkway': 'Mode: <strong>+Walkway</strong> — click source junction, then click target junction',
+                'add-walkway': 'Mode: <strong>+Walkway</strong> — click a purple junction square to start, then click another to connect',
                 'delete-node': 'Mode: <strong>Del Node</strong> — click a building to remove it',
                 'delete-junction': 'Mode: <strong>Del Jct</strong> — click a junction to remove it',
                 'delete-walkway': 'Mode: <strong>Del Walkway</strong> — click a walkway line to remove it'
@@ -524,10 +524,6 @@
                 }
             }
 
-            for (const [jname, jct] of Object.entries(allJunctions)) {
-                createJunctionMarker(jname, jct);
-            }
-
             for (const w of allWalkways) {
                 const a = allJunctions[w.from], b = allJunctions[w.to];
                 if (!a || !b) continue;
@@ -575,6 +571,10 @@
                 edgeLines.push(visual);
             }
 
+            for (const [jname, jct] of Object.entries(allJunctions)) {
+                createJunctionMarker(jname, jct);
+            }
+
             updateSelects();
         }
 
@@ -594,15 +594,15 @@
         }
 
         function makeJunctionIcon(color) {
-            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">'
-                + '<rect x="2" y="2" width="12" height="12" rx="2" fill="' + color + '" stroke="white" stroke-width="2"/>'
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22">'
+                + '<rect x="3" y="3" width="16" height="16" rx="3" fill="' + color + '" stroke="white" stroke-width="2.5"/>'
                 + '</svg>';
             return L.divIcon({
                 className: '',
                 html: svg,
-                iconSize: [16, 16],
-                iconAnchor: [8, 8],
-                tooltipAnchor: [0, -12],
+                iconSize: [22, 22],
+                iconAnchor: [11, 11],
+                tooltipAnchor: [0, -14],
             });
         }
 
@@ -647,10 +647,11 @@
             const m = L.marker([jct.lat, jct.lng], {
                 icon: makeJunctionIcon('#805ad5'),
                 draggable: true,
+                zIndexOffset: -1000,
             }).addTo(map);
 
             m.bindTooltip(name, {
-                permanent: true, direction: 'top', offset: [0, -12], className: 'node-label'
+                permanent: true, direction: 'top', offset: [0, -14], className: 'node-label'
             });
 
             m._junctionName = name;
