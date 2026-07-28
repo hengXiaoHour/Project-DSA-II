@@ -82,9 +82,9 @@ class Navigator:
 
     def remove_junction(self, name):
         self._junctions.pop(name, None)
+        self._walkways = [w for w in self._walkways if w["from"] != name and w["to"] != name]
         for node_name in self._nodes:
-            if self._nodes[node_name].get("nearest_junction") == name:
-                self._snap_building(node_name)
+            self._snap_building(node_name)
 
     def update_junction(self, name, lat=None, lng=None, new_name=None):
         if name not in self._junctions:
@@ -118,6 +118,8 @@ class Navigator:
         if path:
             walkway["path"] = path
         self._walkways.append(walkway)
+        for node_name in self._nodes:
+            self._snap_building(node_name)
         return True
 
     def remove_walkway(self, from_jct, to_jct):
@@ -125,6 +127,8 @@ class Navigator:
             if (w["from"] == from_jct and w["to"] == to_jct) or \
                (w["from"] == to_jct and w["to"] == from_jct):
                 self._walkways.pop(i)
+                for node_name in self._nodes:
+                    self._snap_building(node_name)
                 return True
         return False
 
@@ -141,13 +145,43 @@ class Navigator:
                 best = jname
         return best
 
+    def _nearest_point_on_walkway(self, lat, lng, j1_name, j2_name):
+        j1 = self._junctions[j1_name]
+        j2 = self._junctions[j2_name]
+        ax, ay = j1["lng"], j1["lat"]
+        bx, by = j2["lng"], j2["lat"]
+        px, py = lng, lat
+        abx, aby = bx - ax, by - ay
+        denom = abx * abx + aby * aby
+        if denom == 0:
+            t = 0
+        else:
+            t = ((px - ax) * abx + (py - ay) * aby) / denom
+        t = max(0, min(1, t))
+        qx, qy = ax + t * abx, ay + t * aby
+        dist = self._haversine_coords(lat, lng, qy, qx)
+        return dist, qy, qx, j1_name, j2_name, t
+
     def _snap_building(self, name):
         node = self._nodes.get(name)
-        if not node or not self._junctions:
+        if not node or not self._walkways:
             return
-        nearest = self.get_nearest_junction(name)
-        if nearest:
-            node["nearest_junction"] = nearest
+        for key in ["snap_lat", "snap_lng", "snap_j1", "snap_j2", "snap_t"]:
+            node.pop(key, None)
+        best_dist = float("inf")
+        best = None
+        for w in self._walkways:
+            dist, qlat, qlng, j1, j2, t = self._nearest_point_on_walkway(
+                node["lat"], node["lng"], w["from"], w["to"])
+            if dist < best_dist:
+                best_dist = dist
+                best = (qlat, qlng, j1, j2, t)
+        if best:
+            node["snap_lat"] = best[0]
+            node["snap_lng"] = best[1]
+            node["snap_j1"] = best[2]
+            node["snap_j2"] = best[3]
+            node["snap_t"] = best[4]
 
     def _build_junction_graph(self):
         g = Graph()
@@ -156,14 +190,27 @@ class Navigator:
         for w in self._walkways:
             g.add_edge(w["from"], w["to"], w["weight"])
         for nname, node in self._nodes.items():
-            jct = node.get("nearest_junction")
-            if jct and jct in self._junctions:
-                g.add_vertex(nname)
-                d = self._haversine_coords(
-                    node["lat"], node["lng"],
-                    self._junctions[jct]["lat"], self._junctions[jct]["lng"],
-                )
-                g.add_edge(nname, jct, d)
+            if "snap_lat" in node and "snap_j1" in node:
+                snap_name = f"_snap_{nname}"
+                g.add_vertex(snap_name)
+                d_snap = self._haversine_coords(
+                    node["lat"], node["lng"], node["snap_lat"], node["snap_lng"])
+                g.add_edge(nname, snap_name, d_snap)
+                for jkey in ["snap_j1", "snap_j2"]:
+                    jname = node.get(jkey)
+                    if jname and jname in self._junctions:
+                        d = self._haversine_coords(
+                            node["snap_lat"], node["snap_lng"],
+                            self._junctions[jname]["lat"], self._junctions[jname]["lng"])
+                        g.add_edge(snap_name, jname, d)
+            elif node.get("nearest_junction"):
+                jname = node["nearest_junction"]
+                if jname in self._junctions:
+                    g.add_vertex(nname)
+                    d = self._haversine_coords(
+                        node["lat"], node["lng"],
+                        self._junctions[jname]["lat"], self._junctions[jname]["lng"])
+                    g.add_edge(nname, jname, d)
         return g
 
     def _build_graph(self):

@@ -911,11 +911,16 @@
             const coords = [];
             for (let i = 0; i < path.length; i++) {
                 const name = path[i];
-                const nd = allNodes[name];
-                const jct = allJunctions[name];
-                const d = nd || jct;
-                if (!d) continue;
-                coords.push([d.lat, d.lng]);
+                let pt = null;
+                if (allNodes[name]) pt = [allNodes[name].lat, allNodes[name].lng];
+                else if (allJunctions[name]) pt = [allJunctions[name].lat, allJunctions[name].lng];
+                else if (name.startsWith('_snap_')) {
+                    const buildingName = name.slice(6);
+                    const b = allNodes[buildingName];
+                    if (b && b.snap_lat != null) pt = [b.snap_lat, b.snap_lng];
+                }
+                if (!pt) continue;
+                coords.push(pt);
 
                 if (i < path.length - 1) {
                     const next = path[i + 1];
