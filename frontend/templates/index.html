@@ -235,7 +235,7 @@
         </div>
         <div class="sep"></div>
         <label style="font-size:10px;font-weight:600;color:#805ad5;display:flex;align-items:center;gap:3px;cursor:pointer;user-select:none;">
-            <input type="checkbox" id="showJunctions" onchange="toggleJunctions()" style="accent-color:#805ad5;"> Jct
+            <input type="checkbox" id="showNetwork" onchange="toggleNetwork()" style="accent-color:#805ad5;"> Network
         </label>
         <div class="sep"></div>
         <button class="btn orange" onclick="clearGraph()">Clear</button>
@@ -328,21 +328,24 @@
         let pendingLat = null, pendingLng = null;
         let allNodes = {}, allEdges = [], allJunctions = {}, allWalkways = [];
 
-        function toggleJunctions() {
-            const show = document.getElementById('showJunctions').checked;
+        function toggleNetwork() {
+            const show = document.getElementById('showNetwork').checked;
             for (const m of Object.values(junctionMarkers)) {
                 if (show) m.addTo(map); else m.remove();
             }
+            for (const l of walkwayLines) {
+                if (show) l.addTo(map); else l.remove();
+            }
         }
 
-        function showJunctionMarkers() {
-            document.getElementById('showJunctions').checked = true;
-            toggleJunctions();
+        function showNetwork() {
+            document.getElementById('showNetwork').checked = true;
+            toggleNetwork();
         }
 
-        function hideJunctionMarkers() {
-            document.getElementById('showJunctions').checked = false;
-            toggleJunctions();
+        function hideNetwork() {
+            document.getElementById('showNetwork').checked = false;
+            toggleNetwork();
         }
 
         function init() {
@@ -418,9 +421,9 @@
 
             const jctModes = ['add-junction', 'add-walkway', 'delete-junction', 'delete-walkway'];
             if (jctModes.includes(newMode)) {
-                showJunctionMarkers();
+                showNetwork();
             } else {
-                hideJunctionMarkers();
+                hideNetwork();
             }
 
             for (const [name, m] of Object.entries(markers)) {
@@ -603,8 +606,9 @@
                 createJunctionMarker(jname, jct);
             }
 
-            if (!document.getElementById('showJunctions').checked) {
+            if (!document.getElementById('showNetwork').checked) {
                 for (const m of Object.values(junctionMarkers)) m.remove();
+                for (const l of walkwayLines) l.remove();
             }
 
             updateSelects();
