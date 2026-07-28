@@ -1,130 +1,83 @@
 {
   "nodes": {
+    "Entrance": {
+      "lat": 11.561961,
+      "lng": 104.8913,
+      "category": "Access Point"
+    },
     "Building A": {
-      "lat": 11.568361711145743,
-      "lng": 104.89156007766725,
+      "lat": 11.56241,
+      "lng": 104.891208,
       "category": "Academic"
     },
-    "Building B": {
-      "lat": 11.569436229645786,
-      "lng": 104.88959670066835,
+    "Library": {
+      "lat": 11.56268,
+      "lng": 104.891438,
+      "category": "Service"
+    },
+    "Building Stem": {
+      "lat": 11.562365,
+      "lng": 104.890566,
       "category": "Academic"
     },
-    "Building C": {
-      "lat": 11.570072142259491,
-      "lng": 104.89123553037645,
+    "NICC": {
+      "lat": 11.562949,
+      "lng": 104.891575,
+      "category": "Service"
+    },
+    "CKCC": {
+      "lat": 11.563039,
+      "lng": 104.891254,
       "category": "Academic"
     },
     "Building D": {
-      "lat": 11.569332823603386,
-      "lng": 104.88959401845935,
+      "lat": 11.563219,
+      "lng": 104.891208,
       "category": "Academic"
     },
-    "Building Stem": {
-      "lat": 11.569362743433832,
-      "lng": 104.88977909088136,
+    "Building B": {
+      "lat": 11.563129,
+      "lng": 104.890842,
+      "category": "Academic"
+    },
+    "Study Office": {
+      "lat": 11.562365,
+      "lng": 104.8902,
+      "category": "Administration"
+    },
+    "Canteen": {
+      "lat": 11.56259,
+      "lng": 104.889925,
+      "category": "Service"
+    },
+    "Building C": {
+      "lat": 11.562859,
+      "lng": 104.889741,
       "category": "Academic"
     },
     "Building T": {
-      "lat": 11.570185219652146,
-      "lng": 104.89181756973268,
+      "lat": 11.562994,
+      "lng": 104.889787,
       "category": "Academic"
-    },
-    "CKCC": {
-      "lat": 11.56884075498352,
-      "lng": 104.88881838321686,
-      "category": "Academic"
-    },
-    "Canteen": {
-      "lat": 11.570091299808924,
-      "lng": 104.8906147480011,
-      "category": "Service"
-    },
-    "Entrance": {
-      "lat": 11.567410201444254,
-      "lng": 104.89170223474504,
-      "category": "Service"
-    },
-    "Library": {
-      "lat": 11.568114544604855,
-      "lng": 104.88957524299622,
-      "category": "Service"
-    },
-    "NICC": {
-      "lat": 11.568783130383396,
-      "lng": 104.88908636569977,
-      "category": "Service"
-    },
-    "Study Office": {
-      "lat": 11.569876154761333,
-      "lng": 104.89026325941086,
-      "category": "Admin"
     }
   },
-  "walkways": [
-    {
-      "name": "Main Path",
-      "points": [
-        "J-Entrance",
-        "J-MainRoad",
-        "J-Canteen"
-      ],
-      "weight": 350
-    },
-    {
-      "name": "Stem Path",
-      "points": [
-        "J-MainRoad",
-        "J-StemArea",
-        "J-DZone"
-      ],
-      "weight": 180
-    },
-    {
-      "name": "Library Path",
-      "points": [
-        "J-MainRoad",
-        "J-Library"
-      ],
-      "weight": 230
-    },
-    {
-      "name": "CKCC Path",
-      "points": [
-        "J-Library",
-        "J-CKCC"
-      ],
-      "weight": 120
-    }
-  ],
-  "junctions": {
-    "J-Entrance": {
-      "lat": 11.5674,
-      "lng": 104.8917
-    },
-    "J-MainRoad": {
-      "lat": 11.5684,
-      "lng": 104.8916
-    },
-    "J-StemArea": {
-      "lat": 11.5694,
-      "lng": 104.8898
-    },
-    "J-DZone": {
-      "lat": 11.5693,
-      "lng": 104.8896
-    },
-    "J-Canteen": {
-      "lat": 11.5701,
-      "lng": 104.8913
-    },
-    "J-Library": {
-      "lat": 11.5681,
-      "lng": 104.8896
-    },
-    "J-CKCC": {
-      "lat": 11.5688,
-      "lng": 104.8888
-    }
-  }
+  "edges": [
+    { "from": "Entrance", "to": "Building A", "weight": 90 },
+    { "from": "Building A", "to": "Library", "weight": 60 },
+    { "from": "Building A", "to": "Building Stem", "weight": 230 },
+    { "from": "Library", "to": "NICC", "weight": 60 },
+    { "from": "Library", "to": "CKCC", "weight": 100 },
+    { "from": "Library", "to": "Building D", "weight": 240 },
+    { "from": "Library", "to": "Building Stem", "weight": 240 },
+    { "from": "NICC", "to": "CKCC", "weight": 80 },
+    { "from": "Building D", "to": "CKCC", "weight": 64 },
+    { "from": "Building B", "to": "Building D", "weight": 50 },
+    { "from": "Building B", "to": "Building Stem", "weight": 50 },
+    { "from": "Building D", "to": "Building Stem", "weight": 50 },
+    { "from": "Study Office", "to": "Building Stem", "weight": 85 },
+    { "from": "Study Office", "to": "Canteen", "weight": 60 },
+    { "from": "Building C", "to": "Building T", "weight": 40 },
+    { "from": "Building C", "to": "Canteen", "weight": 90 },
+    { "from": "Building T", "to": "Canteen", "weight": 90 }
+  ]
 }

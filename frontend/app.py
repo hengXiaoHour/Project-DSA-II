@@ -17,7 +17,7 @@ def _load_state():
     if os.path.exists(path):
         with open(path) as f:
             data = json.load(f)
-            if data.get("nodes") or data.get("walkways") or data.get("junctions"):
+            if data.get("nodes"):
                 nav.load_state(data)
                 return True
     return False
@@ -86,27 +86,32 @@ def update_node(name):
     return jsonify({"status": "ok"})
 
 
-@app.route("/api/walkways", methods=["GET"])
-def list_walkways():
-    return jsonify(nav._walkways)
-
-
-@app.route("/api/walkways", methods=["POST"])
-def add_walkway():
+@app.route("/api/edges", methods=["POST"])
+def add_edge():
     data = request.json
-    points = data.get("points")
-    if not points or len(points) < 2:
-        return jsonify({"error": "At least 2 points required"}), 400
-    name = nav.add_walkway(points, data.get("name"))
-    _save_state()
-    return jsonify({"status": "ok", "name": name}), 201
-
-
-@app.route("/api/walkways/<name>", methods=["DELETE"])
-def delete_walkway(name):
-    ok = nav.remove_walkway(name)
+    from_name = data.get("from")
+    to_name = data.get("to")
+    if not from_name or not to_name:
+        return jsonify({"error": "from and to are required"}), 400
+    weight = data.get("weight")
+    path = data.get("path")
+    ok = nav.add_edge(from_name, to_name, weight, path)
     if not ok:
-        return jsonify({"error": "Walkway not found"}), 404
+        return jsonify({"error": "Both nodes must exist"}), 400
+    _save_state()
+    return jsonify({"status": "ok"}), 201
+
+
+@app.route("/api/edges", methods=["DELETE"])
+def delete_edge():
+    data = request.json
+    from_name = data.get("from")
+    to_name = data.get("to")
+    if not from_name or not to_name:
+        return jsonify({"error": "from and to are required"}), 400
+    ok = nav.remove_edge(from_name, to_name)
+    if not ok:
+        return jsonify({"error": "Edge not found"}), 404
     _save_state()
     return jsonify({"status": "ok"})
 
@@ -155,6 +160,40 @@ def update_junction(name):
     return jsonify({"status": "ok"})
 
 
+@app.route("/api/walkways", methods=["GET"])
+def list_walkways():
+    return jsonify(nav._walkways)
+
+
+@app.route("/api/walkways", methods=["POST"])
+def add_walkway():
+    data = request.json
+    from_jct = data.get("from")
+    to_jct = data.get("to")
+    if not from_jct or not to_jct:
+        return jsonify({"error": "from and to are required"}), 400
+    path = data.get("path")
+    ok = nav.add_walkway(from_jct, to_jct, path)
+    if not ok:
+        return jsonify({"error": "Both junctions must exist"}), 400
+    _save_state()
+    return jsonify({"status": "ok"}), 201
+
+
+@app.route("/api/walkways", methods=["DELETE"])
+def delete_walkway():
+    data = request.json
+    from_jct = data.get("from")
+    to_jct = data.get("to")
+    if not from_jct or not to_jct:
+        return jsonify({"error": "from and to are required"}), 400
+    ok = nav.remove_walkway(from_jct, to_jct)
+    if not ok:
+        return jsonify({"error": "Walkway not found"}), 404
+    _save_state()
+    return jsonify({"status": "ok"})
+
+
 @app.route("/api/find_path", methods=["POST"])
 def find_path():
     data = request.json
@@ -179,20 +218,6 @@ def load_graph():
     return jsonify({"status": "ok"})
 
 
-@app.route("/api/graph/save", methods=["POST"])
-def save_graph():
-    state = nav.get_state()
-    _save_state()
-    num_nodes = len(state.get("nodes", {}))
-    num_walkways = len(state.get("walkways", []))
-    return jsonify({
-        "status": "ok",
-        "path": os.path.abspath(_get_state_path()),
-        "nodes": num_nodes,
-        "walkways": num_walkways,
-    })
-
-
 @app.route("/api/graph/sample", methods=["GET"])
 def get_sample():
     sample_path = os.path.join(os.path.dirname(__file__), "..", "doc", "sample_campus.json")
@@ -200,6 +225,25 @@ def get_sample():
         with open(sample_path) as f:
             return jsonify(json.load(f))
     return jsonify({"error": "Sample not found"}), 404
+
+@app.route("/api/graph/save", methods=["POST"])
+def save_graph():
+    state = nav.get_state()
+    _save_state()
+    num_nodes = len(state.get("nodes", {}))
+    num_edges = len(state.get("edges", []))
+    num_paths = sum(1 for e in state.get("edges", []) if e.get("path"))
+    num_junctions = len(state.get("junctions", {}))
+    num_walkways = len(state.get("walkways", []))
+    return jsonify({
+        "status": "ok",
+        "path": os.path.abspath(_get_state_path()),
+        "nodes": num_nodes,
+        "edges": num_edges,
+        "paths": num_paths,
+        "junctions": num_junctions,
+        "walkways": num_walkways,
+    })
 
 
 @app.route("/api/buildings", methods=["GET"])
@@ -253,11 +297,7 @@ def tree_traversal(traversal_type):
 @app.route("/api/adjacency", methods=["GET"])
 def get_adjacency():
     g = nav._build_graph()
-    display = {}
-    for k, v in g.vertices.items():
-        if not k.startswith("_"):
-            display[k] = [(n, w) for n, w in v if not n.startswith("_")]
-    return jsonify(display)
+    return jsonify(g.vertices)
 
 
 if __name__ == "__main__":
