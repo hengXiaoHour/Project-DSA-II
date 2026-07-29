@@ -2,9 +2,14 @@
   "nodes": {
     "Building A": {
       "category": "Academic",
-      "lat": 11.568361711145743,
-      "lng": 104.89156007766725,
-      "nearest_junction": "j2"
+      "lat": 11.568445576134442,
+      "lng": 104.89072859287263,
+      "nearest_junction": "j2",
+      "snap_lat": 11.568277656860609,
+      "snap_lng": 104.89074437106567,
+      "snap_j1": "j3",
+      "snap_j2": "j2",
+      "snap_t": 0.5463408963988371
     },
     "Building B": {
       "category": "Academic",
@@ -26,15 +31,25 @@
     },
     "Building Stem": {
       "category": "Academic",
-      "lat": 11.569604746274809,
-      "lng": 104.8898568749428,
-      "nearest_junction": "j4"
+      "lat": 11.56957312388362,
+      "lng": 104.88977372646333,
+      "nearest_junction": "j4",
+      "snap_lat": 11.569398867796306,
+      "snap_lng": 104.88979898540768,
+      "snap_j1": "j10",
+      "snap_j2": "j4",
+      "snap_t": 0.7298734115463872
     },
     "Building T": {
       "category": "Academic",
-      "lat": 11.570185219652146,
-      "lng": 104.89181756973268,
-      "nearest_junction": "j13"
+      "lat": 11.57034812626897,
+      "lng": 104.8918041586876,
+      "nearest_junction": "j13",
+      "snap_lat": 11.570190063901377,
+      "snap_lng": 104.89182484269129,
+      "snap_j1": "j12",
+      "snap_j2": "j13",
+      "snap_t": 0.7931825108443027
     },
     "CKCC": {
       "category": "Academic",
@@ -50,15 +65,25 @@
     },
     "Entrance": {
       "category": "Access Point",
-      "lat": 11.567410201444254,
-      "lng": 104.89170223474504,
-      "nearest_junction": "j1"
+      "lat": 11.567407593534499,
+      "lng": 104.89171028137208,
+      "nearest_junction": "j1",
+      "snap_lat": 11.567476030699337,
+      "snap_lng": 104.89170759916307,
+      "snap_j1": "j1",
+      "snap_j2": "j2",
+      "snap_t": 0
     },
     "Library": {
       "category": "Service",
-      "lat": 11.568114544604855,
-      "lng": 104.88957524299622,
-      "nearest_junction": "j3"
+      "lat": 11.568287998491696,
+      "lng": 104.88951086997986,
+      "nearest_junction": "j3",
+      "snap_lat": 11.568154078492926,
+      "snap_lng": 104.88952956701048,
+      "snap_j1": "j5",
+      "snap_j2": "j3",
+      "snap_t": 0.7929321458249841
     },
     "NICC": {
       "category": "Service",

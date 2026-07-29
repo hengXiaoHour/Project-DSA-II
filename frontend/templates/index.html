@@ -6,6 +6,7 @@
     <title>RUPP Campus Navigation System</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -175,6 +176,11 @@
         .adj-item .vtx { font-weight: 700; color: #2d3748; }
         .adj-item .w { color: #38a169; font-weight: 600; }
 
+        #forceGraphContainer {
+            width: 100%; height: 330px; border: 1px solid #e2e8f0;
+            border-radius: 6px; overflow: hidden;
+        }
+
         .toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #38a169; color: white; padding: 8px 20px;
@@ -286,8 +292,7 @@
                     <div id="treeDisplay" style="font-size:10px;color:#4a5568;font-family:monospace;white-space:pre-wrap;"></div>
                 </div>
                 <div class="tab-content hidden" id="tab-graph">
-                    <h3>Adjacency List</h3>
-                    <div id="adjDisplay"></div>
+                    <div id="forceGraphContainer"></div>
                 </div>
             </div>
         </div>
@@ -776,7 +781,7 @@
             document.getElementById('tab-' + name).classList.remove('hidden');
             if (name === 'info') loadBuildingList();
             if (name === 'tree') loadTree('pre');
-            if (name === 'graph') loadAdjacency();
+            if (name === 'graph') renderForceGraph();
         }
 
         function loadBuildingList() {
@@ -825,33 +830,78 @@
             .catch(() => {});
         }
 
-        function loadAdjacency() {
-            const div = document.getElementById('adjDisplay');
-            const g = allNodes;
-            const jcts = allJunctions;
-            const names = Object.keys(g).sort();
-            if (names.length === 0) { div.innerHTML = '<div style="font-size:10px;color:#a0aec0;">No nodes.</div>'; return; }
+        let forceGraph = null;
+        let forceGraphNodes = null;
+        let forceGraphEdges = null;
+
+        function renderForceGraph() {
+            const container = document.getElementById('forceGraphContainer');
+            const buildings = allNodes;
+            const names = Object.keys(buildings);
+            if (names.length === 0) {
+                container.innerHTML = '<div style="font-size:11px;color:#a0aec0;text-align:center;padding:40px;">No buildings to display.</div>';
+                forceGraph = null;
+                return;
+            }
 
             fetch('/api/adjacency')
             .then(r => r.json())
             .then(adj => {
-                let html = `<span style="font-size:10px;color:#718096;display:block;margin-bottom:4px;">${names.length} buildings, ${Object.keys(jcts).length} junctions</span>`;
+                const buildingSet = new Set(names);
+                const nodes = [];
+                const edges = [];
+
+                names.forEach((name, i) => {
+                    const n = { id: name, label: name, shape: 'dot', size: 18, color: '#4299e1', font: { size: 11, color: '#2d3748', face: 'Segoe UI' } };
+                    nodes.push(n);
+                });
+
                 for (const n of names) {
                     const raw = adj[n] || [];
-                    const edges = raw.map(([to, weight]) => ({to, weight})).sort((a, b) => a.to.localeCompare(b.to));
-                    if (edges.length === 0) {
-                        html += `<div class="adj-item"><span class="vtx">${n}</span></div>`;
-                        continue;
-                    }
-                    html += `<div class="adj-item"><span class="vtx">${n}</span></div>`;
-                    for (let i = 0; i < edges.length; i++) {
-                        const conn = i === edges.length - 1 ? '└──' : '├──';
-                        html += `<div style="padding-left:12px;font-size:10px;color:#718096;">${conn} ${edges[i].to} <span class="w">${edges[i].weight}m</span></div>`;
+                    for (const [to, weight] of raw) {
+                        if (buildingSet.has(to) && n < to) {
+                            edges.push({ from: n, to: to, label: weight + 'm', font: { size: 9, color: '#718096', strokeWidth: 0 }, color: { color: '#a0aec0', highlight: '#4299e1' }, width: 2, smooth: { type: 'continuous' } });
+                        }
                     }
                 }
-                div.innerHTML = html;
+
+                const data = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+                const options = {
+                    physics: { solver: 'forceAtlas2Based', forceAtlas2Based: { gravitationalConstant: -40, centralGravity: 0.005, springLength: 120, springConstant: 0.02 }, stabilization: { iterations: 100 } },
+                    interaction: { hover: true, tooltipDelay: 0 },
+                    edges: { smooth: { type: 'continuous' } },
+                };
+
+                forceGraphNodes = data.nodes;
+                forceGraphEdges = data.edges;
+                forceGraph = new vis.Network(container, data, options);
+
+                forceGraph.on('click', function(params) {
+                    if (params.nodes.length > 0) {
+                        const name = params.nodes[0];
+                        const b = buildings[name];
+                        if (b) map.flyTo([b.lat, b.lng], 18, { duration: 1 });
+                    }
+                });
             })
-            .catch(() => {});
+            .catch(() => {
+                container.innerHTML = '<div style="font-size:11px;color:#e53e3e;text-align:center;padding:40px;">Failed to load graph.</div>';
+            });
+        }
+
+        function highlightPathOnGraph(path) {
+            if (!forceGraph) return;
+            const buildingSet = new Set(Object.keys(allNodes));
+            const pathBuildings = (path || []).filter(n => buildingSet.has(n));
+            forceGraphNodes.forEach(n => {
+                const color = pathBuildings.includes(n.id) ? '#d69e2e' : '#4299e1';
+                const size = pathBuildings.includes(n.id) ? 22 : 18;
+                forceGraphNodes.update({ id: n.id, color: color, size: size });
+            });
+            forceGraphEdges.forEach(e => {
+                const hl = pathBuildings.includes(e.from) && pathBuildings.includes(e.to);
+                forceGraphEdges.update({ id: e.id, color: { color: hl ? '#d69e2e' : '#a0aec0', highlight: hl ? '#d69e2e' : '#4299e1' }, width: hl ? 4 : 2 });
+            });
         }
 
         function updateSelects() {
@@ -896,6 +946,7 @@
                         <span class="cost-text">${dist}m</span>`;
                     highlightPath(data.path);
                     highlightPathNodes(data.path, start, end);
+                    highlightPathOnGraph(data.path);
                 } else {
                     bar.innerHTML = '<span class="algo-badge">DIJKSTRA</span><span class="error-text">No path found</span>';
                     clearHighlights();
@@ -962,6 +1013,7 @@
                 m.setIcon(makeJunctionIcon('#805ad5'));
             }
             if (pathLine) { map.removeLayer(pathLine); pathLine = null; }
+            if (forceGraph) highlightPathOnGraph([]);
         }
 
         function clearGraph() {
