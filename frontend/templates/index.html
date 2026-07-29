@@ -452,13 +452,13 @@
             sel.disabled = !on;
             if (on) {
                 sel.style.borderColor = '#4299e1';
-                if (mode === 'select') {
-                    document.getElementById('hintBar').innerHTML = 'Mode: <strong>Move</strong> — drag nodes around';
-                }
+                document.getElementById('hintBar').innerHTML = 'Mode: <strong>Move</strong> — drag nodes around';
+                for (const m of Object.values(markers)) m.dragging.enable();
             } else {
                 sel.value = 'select';
                 if (mode !== 'select') setMode('select');
                 document.getElementById('hintBar').innerHTML = 'Navigation mode — select buildings, run Dijkstra';
+                for (const m of Object.values(markers)) m.dragging.disable();
             }
         }
 
@@ -727,9 +727,10 @@
         }
 
         function createMarker(name, data) {
+            const editOn = document.getElementById('editModeToggle')?.checked;
             const m = L.marker([data.lat, data.lng], {
                 icon: makePinIcon('#4299e1'),
-                draggable: true,
+                draggable: editOn && mode === 'select',
             }).addTo(map);
 
             m.bindTooltip(name, {
