@@ -610,8 +610,18 @@
                 allWalkways = state.walkways || [];
                 renderGraph();
                 renderSidebar();
+                fitMapToNodes();
             })
             .catch(() => {});
+        }
+
+        function fitMapToNodes() {
+            const coords = [];
+            for (const d of Object.values(allNodes)) coords.push([d.lat, d.lng]);
+            for (const d of Object.values(allJunctions)) coords.push([d.lat, d.lng]);
+            if (coords.length > 0) {
+                map.fitBounds(coords, { padding: [40, 40], maxZoom: 17 });
+            }
         }
 
         function renderGraph() {
