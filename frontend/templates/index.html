@@ -820,9 +820,8 @@
             let html = names.map(n => {
                 const d = allNodes[n];
                 const cat = d.category || 'Uncategorized';
-                const jct = d.nearest_junction ? ` → ${d.nearest_junction}` : '';
                 return `<div class="node-row">
-                    <span><span class="node-name">${n}</span> <span class="node-cat">${cat}${jct}</span></span>
+                    <span><span class="node-name">${n}</span> <span class="node-cat">${cat}</span></span>
                     <button class="del-btn" onclick="deleteNodeApi('${n}')">✕</button>
                 </div>`;
             }).join('');
