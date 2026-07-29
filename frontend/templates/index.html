@@ -460,6 +460,7 @@
                 document.getElementById('hintBar').innerHTML = 'Navigation mode — select buildings, run Dijkstra';
                 for (const m of Object.values(markers)) m.dragging.disable();
             }
+            renderSidebar();
         }
 
         function onModeChange() {
@@ -816,13 +817,15 @@
             const list = document.getElementById('nodeList');
             const names = Object.keys(allNodes).sort();
             const jnames = Object.keys(allJunctions).sort();
+            const editOn = document.getElementById('editModeToggle')?.checked;
             document.getElementById('nodeCount').textContent = `(${names.length})`;
             let html = names.map(n => {
                 const d = allNodes[n];
                 const cat = d.category || 'Uncategorized';
+                const del = editOn ? `<button class="del-btn" onclick="deleteNodeApi('${n}')">✕</button>` : '';
                 return `<div class="node-row">
                     <span><span class="node-name">${n}</span> <span class="node-cat">${cat}</span></span>
-                    <button class="del-btn" onclick="deleteNodeApi('${n}')">✕</button>
+                    ${del}
                 </div>`;
             }).join('');
 
@@ -830,9 +833,10 @@
                 html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
                 html += '<span style="font-size:9px;font-weight:700;color:#805ad5;">JUNCTIONS</span>';
                 for (const j of jnames) {
+                    const del = editOn ? `<button class="del-btn" onclick="deleteJunctionApi('${j}')">✕</button>` : '';
                     html += `<div class="node-row">
                         <span style="font-size:9px;"><span class="node-name" style="color:#805ad5;">${j}</span></span>
-                        <button class="del-btn" onclick="deleteJunctionApi('${j}')">✕</button>
+                        ${del}
                     </div>`;
                 }
                 html += '</div>';
@@ -842,9 +846,10 @@
                 html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
                 html += '<span style="font-size:9px;font-weight:700;color:#805ad5;">WALKWAYS</span>';
                 for (const w of allWalkways) {
+                    const del = editOn ? `<button class="del-btn" onclick="deleteWalkwayApi('${w.from}','${w.to}')">✕</button>` : '';
                     html += `<div class="node-row">
                         <span style="font-size:9px;"><span class="node-name" style="color:#805ad5;">${w.from}</span> ↔ <span class="node-name" style="color:#805ad5;">${w.to}</span> <span style="color:#38a169;font-weight:600;">${w.weight}m</span></span>
-                        <button class="del-btn" onclick="deleteWalkwayApi('${w.from}','${w.to}')">✕</button>
+                        ${del}
                     </div>`;
                 }
                 html += '</div>';
