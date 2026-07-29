@@ -223,6 +223,20 @@ class Navigator:
             g.add_edge(e["from"], e["to"], e["weight"])
         return g
 
+    def shortest_path_adjacency(self):
+        g = self._build_graph()
+        names = sorted(self._nodes.keys())
+        adj = {n: [] for n in names}
+        for i, a in enumerate(names):
+            for b in names[i + 1:]:
+                _, cost = g.dijkstra(a, b)
+                if cost != float("inf"):
+                    adj[a].append((b, round(cost)))
+                    adj[b].append((a, round(cost)))
+        for n in names:
+            adj[n].sort(key=lambda x: x[0])
+        return adj
+
     def shortest_path(self, start, end):
         if start not in self._nodes or end not in self._nodes:
             return None, float("inf")

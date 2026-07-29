@@ -98,7 +98,26 @@
       "nearest_junction": "j10"
     }
   },
-  "edges": [],
+  "edges": [
+    { "from": "Entrance", "to": "Building A", "weight": 90 },
+    { "from": "Building A", "to": "Library", "weight": 60 },
+    { "from": "Building A", "to": "Building Stem", "weight": 240 },
+    { "from": "Building A", "to": "Building D", "weight": 240 },
+    { "from": "Building A", "to": "Building T", "weight": 300 },
+    { "from": "Library", "to": "NICC", "weight": 60 },
+    { "from": "Library", "to": "Building D", "weight": 240 },
+    { "from": "Library", "to": "Building Stem", "weight": 240 },
+    { "from": "NICC", "to": "CKCC", "weight": 80 },
+    { "from": "Building D", "to": "CKCC", "weight": 64 },
+    { "from": "Building B", "to": "Building D", "weight": 50 },
+    { "from": "Building B", "to": "Building Stem", "weight": 50 },
+    { "from": "Building D", "to": "Building Stem", "weight": 50 },
+    { "from": "Study Office", "to": "Building Stem", "weight": 85 },
+    { "from": "Study Office", "to": "Canteen", "weight": 60 },
+    { "from": "Building C", "to": "Building T", "weight": 40 },
+    { "from": "Building C", "to": "Canteen", "weight": 90 },
+    { "from": "Building T", "to": "Canteen", "weight": 90 }
+  ],
   "junctions": {
     "j1": {
       "lat": 11.567476030699337,

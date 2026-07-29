@@ -117,8 +117,8 @@ class TestGraphAPI:
         load_sample(client)
         resp = client.post("/api/find_path", json={"start": "Library", "end": "Building Stem"})
         d = resp.get_json()
-        assert d["path"] == ["Library", "CKCC", "Building D", "Building Stem"]
-        assert d["cost"] == 214
+        assert d["path"] == ["Library", "Building Stem"]
+        assert d["cost"] == 240
         assert d["algorithm"] == "dijkstra"
 
     def test_find_path_no_route(self, client):
@@ -164,7 +164,7 @@ class TestSaveLoad:
         assert resp.status_code == 200
         d = resp.get_json()
         assert len(d["nodes"]) == 12
-        assert len(d["edges"]) == 17
+        assert len(d["edges"]) == 18
 
     def test_load_clears_previous(self, client):
         client.post("/api/nodes", json={"name": "OLD", "lat": 0, "lng": 0})

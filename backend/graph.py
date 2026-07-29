@@ -124,9 +124,10 @@ class Graph:
         # Weighted undirected edges as specified
         g.add_edge("Entrance", "Building A", 90)
         g.add_edge("Building A", "Library", 60)
-        g.add_edge("Building A", "Building Stem", 230)
+        g.add_edge("Building A", "Building Stem", 240)
+        g.add_edge("Building A", "Building D", 240)
+        g.add_edge("Building A", "Building T", 300)
         g.add_edge("Library", "NICC", 60)
-        g.add_edge("Library", "CKCC", 100)
         g.add_edge("Library", "Building D", 240)
         g.add_edge("Library", "Building Stem", 240)
         g.add_edge("NICC", "CKCC", 80)

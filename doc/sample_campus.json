@@ -64,9 +64,10 @@
   "edges": [
     { "from": "Entrance", "to": "Building A", "weight": 90 },
     { "from": "Building A", "to": "Library", "weight": 60 },
-    { "from": "Building A", "to": "Building Stem", "weight": 230 },
+    { "from": "Building A", "to": "Building Stem", "weight": 240 },
+    { "from": "Building A", "to": "Building D", "weight": 240 },
+    { "from": "Building A", "to": "Building T", "weight": 300 },
     { "from": "Library", "to": "NICC", "weight": 60 },
-    { "from": "Library", "to": "CKCC", "weight": 100 },
     { "from": "Library", "to": "Building D", "weight": 240 },
     { "from": "Library", "to": "Building Stem", "weight": 240 },
     { "from": "NICC", "to": "CKCC", "weight": 80 },

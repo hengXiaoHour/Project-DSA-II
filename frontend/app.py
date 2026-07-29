@@ -300,6 +300,11 @@ def get_adjacency():
     return jsonify(g.vertices)
 
 
+@app.route("/api/adjacency/shortest", methods=["GET"])
+def get_shortest_adjacency():
+    return jsonify(nav.shortest_path_adjacency())
+
+
 if __name__ == "__main__":
     _load_state()
     app.run(debug=True, host="0.0.0.0", port=5000)

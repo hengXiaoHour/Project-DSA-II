@@ -65,20 +65,22 @@ def test_build_campus_graph():
 def test_campus_dijkstra():
     g = Graph.build_campus_graph()
     path, dist = g.dijkstra("Library", "Building Stem")
-    assert path == ["Library", "CKCC", "Building D", "Building Stem"]
-    assert dist == 214
+    assert path == ["Library", "Building Stem"]
+    assert dist == 240
 
 
 def test_campus_entrance_to_t():
     g = Graph.build_campus_graph()
     path, dist = g.dijkstra("Entrance", "Building T")
-    assert dist == 555
+    assert path == ["Entrance", "Building A", "Building T"]
+    assert dist == 390
 
 
 def test_campus_b_to_library():
     g = Graph.build_campus_graph()
     path, dist = g.dijkstra("Building B", "Library")
-    assert dist == 214
+    assert path == ["Building B", "Building D", "CKCC", "NICC", "Library"]
+    assert dist == 254
 
 
 def test_duplicate_vertex(g):
