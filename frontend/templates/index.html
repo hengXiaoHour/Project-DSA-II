@@ -829,27 +829,25 @@
                 </div>`;
             }).join('');
 
-            if (jnames.length > 0) {
+            if (editOn && jnames.length > 0) {
                 html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
                 html += '<span style="font-size:9px;font-weight:700;color:#805ad5;">JUNCTIONS</span>';
                 for (const j of jnames) {
-                    const del = editOn ? `<button class="del-btn" onclick="deleteJunctionApi('${j}')">✕</button>` : '';
                     html += `<div class="node-row">
                         <span style="font-size:9px;"><span class="node-name" style="color:#805ad5;">${j}</span></span>
-                        ${del}
+                        <button class="del-btn" onclick="deleteJunctionApi('${j}')">✕</button>
                     </div>`;
                 }
                 html += '</div>';
             }
 
-            if (allWalkways.length > 0) {
+            if (editOn && allWalkways.length > 0) {
                 html += '<div style="margin-top:6px;padding-top:4px;border-top:2px solid #e2e8f0;">';
                 html += '<span style="font-size:9px;font-weight:700;color:#805ad5;">WALKWAYS</span>';
                 for (const w of allWalkways) {
-                    const del = editOn ? `<button class="del-btn" onclick="deleteWalkwayApi('${w.from}','${w.to}')">✕</button>` : '';
                     html += `<div class="node-row">
                         <span style="font-size:9px;"><span class="node-name" style="color:#805ad5;">${w.from}</span> ↔ <span class="node-name" style="color:#805ad5;">${w.to}</span> <span style="color:#38a169;font-weight:600;">${w.weight}m</span></span>
-                        ${del}
+                        <button class="del-btn" onclick="deleteWalkwayApi('${w.from}','${w.to}')">✕</button>
                     </div>`;
                 }
                 html += '</div>';
