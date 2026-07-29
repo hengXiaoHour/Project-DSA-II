@@ -255,6 +255,9 @@
         <label style="font-size:10px;font-weight:600;color:#805ad5;display:flex;align-items:center;gap:3px;cursor:pointer;user-select:none;">
             <input type="checkbox" id="showNetwork" onchange="toggleNetwork()" style="accent-color:#805ad5;"> Network
         </label>
+        <label style="font-size:10px;font-weight:600;color:#a0aec0;display:flex;align-items:center;gap:3px;cursor:pointer;user-select:none;">
+            <input type="checkbox" id="showEdges" onchange="toggleEdges()" style="accent-color:#a0aec0;"> Edges
+        </label>
         <div class="sep"></div>
         <button class="btn orange" onclick="clearGraph()">Clear</button>
         <button class="btn green" onclick="saveGraph()">Save</button>
@@ -358,6 +361,10 @@
             for (const l of walkwayLines) {
                 if (show) l.addTo(map); else l.remove();
             }
+        }
+
+        function toggleEdges() {
+            renderGraph();
         }
 
         function showNetwork() {
@@ -631,6 +638,10 @@
             if (!document.getElementById('showNetwork').checked) {
                 for (const m of Object.values(junctionMarkers)) m.remove();
                 for (const l of walkwayLines) l.remove();
+            }
+            if (!document.getElementById('showEdges').checked) {
+                for (const l of edgeLines) { try { map.removeLayer(l); } catch(e) {} }
+                edgeLines = [];
             }
 
             updateSelects();
