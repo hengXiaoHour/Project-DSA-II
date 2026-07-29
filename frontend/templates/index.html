@@ -34,30 +34,39 @@
             font-size: 14px;
             margin-right: 8px;
         }
-        .mode-group { display: flex; gap: 2px; flex-wrap: wrap; }
-        .mode-btn {
-            padding: 5px 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            background: #f7fafc;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.15s;
-            color: #4a5568;
-        }
-        .mode-btn:hover { border-color: #4299e1; background: #ebf8ff; }
-        .mode-btn.active { border-color: #4299e1; background: #4299e1; color: white; }
-        .mode-btn.danger.active { border-color: #e53e3e; background: #e53e3e; color: white; }
-        .mode-btn.danger:hover { border-color: #e53e3e; background: #fff5f5; }
-        .mode-btn.green.active { border-color: #38a169; background: #38a169; color: white; }
-        .mode-btn.green:hover { border-color: #38a169; background: #f0fff4; }
-        .mode-btn.orange.active { border-color: #d69e2e; background: #d69e2e; color: white; }
-        .mode-btn.orange:hover { border-color: #d69e2e; background: #fffff0; }
-        .mode-btn.purple.active { border-color: #805ad5; background: #805ad5; color: white; }
-        .mode-btn.purple:hover { border-color: #805ad5; background: #faf5ff; }
+        .nav-group { display: flex; align-items: center; gap: 3px; flex-wrap: wrap; }
 
         .sep { width: 1px; height: 24px; background: #e2e8f0; margin: 0 6px; }
+
+        .switch-label {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 10px; font-weight: 600; color: #718096;
+            cursor: pointer; user-select: none; white-space: nowrap;
+        }
+        .switch { position: relative; display: inline-block; width: 28px; height: 16px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; inset: 0;
+            background: #e2e8f0; border-radius: 16px;
+            transition: 0.2s;
+        }
+        .slider::before {
+            content: ""; position: absolute; height: 12px; width: 12px;
+            left: 2px; bottom: 2px; background: white; border-radius: 50%;
+            transition: 0.2s;
+        }
+        .switch input:checked + .slider { background: #4299e1; }
+        .switch input:checked + .slider::before { transform: translateX(12px); }
+
+        #modeSelect {
+            padding: 2px 6px; border: 2px solid #e2e8f0; border-radius: 4px;
+            font-size: 10px; font-weight: 600; background: #edf2f7; color: #a0aec0;
+            cursor: not-allowed; transition: all 0.2s;
+        }
+        #modeSelect:enabled {
+            background: white; color: #2d3748; border-color: #4299e1;
+            cursor: pointer;
+        }
 
         .nav-group { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
         .nav-group label { font-size: 11px; font-weight: 600; color: #4a5568; }
@@ -232,16 +241,7 @@
 </head>
 <body>
     <div class="toolbar">
-        <span class="title">Graph Editor</span>
-        <div class="mode-group">
-            <button class="mode-btn" data-mode="select" onclick="setMode('select')">Move</button>
-            <button class="mode-btn green" data-mode="add-node" onclick="setMode('add-node')">+Node</button>
-            <button class="mode-btn purple" data-mode="add-junction" onclick="setMode('add-junction')">+Jct</button>
-            <button class="mode-btn purple" data-mode="add-walkway" onclick="setMode('add-walkway')">+Walkway</button>
-            <button class="mode-btn danger" data-mode="delete-node" onclick="setMode('delete-node')">Del Node</button>
-            <button class="mode-btn orange" data-mode="delete-junction" onclick="setMode('delete-junction')">Del Jct</button>
-            <button class="mode-btn orange" data-mode="delete-walkway" onclick="setMode('delete-walkway')">Del Walkway</button>
-        </div>
+        <span class="title">Map View</span>
         <div class="sep"></div>
         <div class="nav-group" id="navGroup">
             <label>From</label>
@@ -259,10 +259,26 @@
             <input type="checkbox" id="showEdges" onchange="toggleEdges()" style="accent-color:#a0aec0;"> Edges
         </label>
         <div class="sep"></div>
-        <button class="btn orange" onclick="clearGraph()">Clear</button>
-        <button class="btn green" onclick="saveGraph()">Save</button>
-        <button class="btn orange" onclick="loadSample()">Sample</button>
-        <button class="btn" onclick="document.getElementById('loadInput').click()">Load</button>
+        <label class="switch-label">
+            <span class="switch">
+                <input type="checkbox" id="editModeToggle" onchange="toggleEditMode()">
+                <span class="slider"></span>
+            </span>
+            Edit Mode
+        </label>
+        <select id="modeSelect" disabled onchange="onModeChange()">
+            <option value="select">move</option>
+            <option value="add-node">+node</option>
+            <option value="delete-node">-node</option>
+            <option value="add-junction">+joint</option>
+            <option value="delete-junction">-joint</option>
+            <option value="add-walkway">+path</option>
+            <option value="delete-walkway">-path</option>
+            <option value="clear">clear</option>
+            <option value="save">save</option>
+            <option value="sample">sample</option>
+            <option value="load">load</option>
+        </select>
         <input type="file" id="loadInput" accept=".json" style="display:none" onchange="loadGraph(event)">
     </div>
 
@@ -275,7 +291,7 @@
                 </div>
                 <div id="map"></div>
             </div>
-            <div class="hint-bar" id="hintBar">Mode: <strong>Move</strong> — drag nodes around</div>
+            <div class="hint-bar" id="hintBar">Navigation mode — select buildings, run Dijkstra</div>
         </div>
         <div class="right-panel">
             <div class="tab-bar">
@@ -430,12 +446,43 @@
             walkwaySource = null;
         }
 
+        function toggleEditMode() {
+            const on = document.getElementById('editModeToggle').checked;
+            const sel = document.getElementById('modeSelect');
+            sel.disabled = !on;
+            if (on) {
+                sel.style.borderColor = '#4299e1';
+                if (mode === 'select') {
+                    document.getElementById('hintBar').innerHTML = 'Mode: <strong>Move</strong> — drag nodes around';
+                }
+            } else {
+                sel.value = 'select';
+                if (mode !== 'select') setMode('select');
+                document.getElementById('hintBar').innerHTML = 'Navigation mode — select buildings, run Dijkstra';
+            }
+        }
+
+        function onModeChange() {
+            const sel = document.getElementById('modeSelect');
+            const val = sel.value;
+            const actions = {
+                'clear': clearGraph,
+                'save': saveGraph,
+                'sample': loadSample,
+                'load': () => document.getElementById('loadInput').click(),
+            };
+            if (actions[val]) {
+                actions[val]();
+                sel.value = mode;
+            } else {
+                setMode(val);
+            }
+        }
+
         function setMode(newMode) {
             clearTempWalkway();
             mode = newMode;
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            const btn = document.querySelector(`.mode-btn[data-mode="${newMode}"]`);
-            if (btn) btn.classList.add('active');
+            document.getElementById('modeSelect').value = newMode;
 
             const hints = {
                 'select': 'Mode: <strong>Move</strong> — drag nodes around',
@@ -446,7 +493,11 @@
                 'delete-junction': 'Mode: <strong>Del Jct</strong> — click a junction to remove it',
                 'delete-walkway': 'Mode: <strong>Del Walkway</strong> — click a walkway line to remove it'
             };
-            document.getElementById('hintBar').innerHTML =             hints[newMode] || '';
+            if (newMode === 'select' && !document.getElementById('editModeToggle').checked) {
+                document.getElementById('hintBar').innerHTML = 'Navigation mode — select buildings, run Dijkstra';
+            } else {
+                document.getElementById('hintBar').innerHTML = hints[newMode] || '';
+            }
 
             const jctModes = ['add-junction', 'add-walkway', 'delete-junction', 'delete-walkway'];
             if (jctModes.includes(newMode)) {
@@ -896,7 +947,7 @@
                     html += `<div class="edge-row">(no connections)</div>`;
                 } else {
                     for (const e of edges) {
-                        html += `<div class="edge-row">→ ${e.to} <span class="edge-weight">(${e.weight}m)</span></div>`;
+                        html += `<div class="edge-row">→ ${e.to}</div>`;
                     }
                 }
             } else {
@@ -907,7 +958,7 @@
                         html += `<div class="edge-row">(no connections)</div>`;
                     } else {
                         for (const e of edges) {
-                            html += `<div class="edge-row">→ ${e.to} <span class="edge-weight">(${e.weight}m)</span></div>`;
+                            html += `<div class="edge-row">→ ${e.to}</div>`;
                         }
                     }
                 }

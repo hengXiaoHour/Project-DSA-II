@@ -2,14 +2,14 @@
   "nodes": {
     "Building A": {
       "category": "Academic",
-      "lat": 11.568445576134442,
-      "lng": 104.89072859287263,
+      "lat": 11.568414129199557,
+      "lng": 104.89068031311037,
       "nearest_junction": "j2",
-      "snap_lat": 11.568277656860609,
-      "snap_lng": 104.89074437106567,
+      "snap_lat": 11.568272884837114,
+      "snap_lng": 104.8906935848496,
       "snap_j1": "j3",
       "snap_j2": "j2",
-      "snap_t": 0.5463408963988371
+      "snap_t": 0.518819859038161
     },
     "Building B": {
       "category": "Academic",
@@ -59,14 +59,19 @@
     },
     "Canteen": {
       "category": "Service",
-      "lat": 11.56957032470631,
-      "lng": 104.89088684320451,
-      "nearest_junction": "j11"
+      "lat": 11.56942842824213,
+      "lng": 104.89089488983156,
+      "nearest_junction": "j11",
+      "snap_lat": 11.56957984835464,
+      "snap_lng": 104.89086475754888,
+      "snap_j1": "j10",
+      "snap_j2": "j11",
+      "snap_t": 0.5711433461856191
     },
     "Entrance": {
       "category": "Access Point",
-      "lat": 11.567407593534499,
-      "lng": 104.89171028137208,
+      "lat": 11.567426103800296,
+      "lng": 104.89169955253602,
       "nearest_junction": "j1",
       "snap_lat": 11.567476030699337,
       "snap_lng": 104.89170759916307,
@@ -76,14 +81,14 @@
     },
     "Library": {
       "category": "Service",
-      "lat": 11.568287998491696,
-      "lng": 104.88951086997986,
+      "lat": 11.568277487596804,
+      "lng": 104.88948941230775,
       "nearest_junction": "j3",
-      "snap_lat": 11.568154078492926,
-      "snap_lng": 104.88952956701048,
+      "snap_lat": 11.568150939030385,
+      "snap_lng": 104.88950708018741,
       "snap_j1": "j5",
       "snap_j2": "j3",
-      "snap_t": 0.7929321458249841
+      "snap_t": 0.7703953305409861
     },
     "NICC": {
       "category": "Service",
@@ -99,24 +104,96 @@
     }
   },
   "edges": [
-    { "from": "Entrance", "to": "Building A", "weight": 90 },
-    { "from": "Building A", "to": "Library", "weight": 60 },
-    { "from": "Building A", "to": "Building Stem", "weight": 240 },
-    { "from": "Building A", "to": "Building D", "weight": 240 },
-    { "from": "Building A", "to": "Building T", "weight": 300 },
-    { "from": "Library", "to": "NICC", "weight": 60 },
-    { "from": "Library", "to": "Building D", "weight": 240 },
-    { "from": "Library", "to": "Building Stem", "weight": 240 },
-    { "from": "NICC", "to": "CKCC", "weight": 80 },
-    { "from": "Building D", "to": "CKCC", "weight": 64 },
-    { "from": "Building B", "to": "Building D", "weight": 50 },
-    { "from": "Building B", "to": "Building Stem", "weight": 50 },
-    { "from": "Building D", "to": "Building Stem", "weight": 50 },
-    { "from": "Study Office", "to": "Building Stem", "weight": 85 },
-    { "from": "Study Office", "to": "Canteen", "weight": 60 },
-    { "from": "Building C", "to": "Building T", "weight": 40 },
-    { "from": "Building C", "to": "Canteen", "weight": 90 },
-    { "from": "Building T", "to": "Canteen", "weight": 90 }
+    {
+      "from": "Entrance",
+      "to": "Building A",
+      "weight": 90
+    },
+    {
+      "from": "Building A",
+      "to": "Library",
+      "weight": 60
+    },
+    {
+      "from": "Building A",
+      "to": "Building Stem",
+      "weight": 240
+    },
+    {
+      "from": "Building A",
+      "to": "Building D",
+      "weight": 240
+    },
+    {
+      "from": "Building A",
+      "to": "Building T",
+      "weight": 300
+    },
+    {
+      "from": "Library",
+      "to": "NICC",
+      "weight": 60
+    },
+    {
+      "from": "Library",
+      "to": "Building D",
+      "weight": 240
+    },
+    {
+      "from": "Library",
+      "to": "Building Stem",
+      "weight": 240
+    },
+    {
+      "from": "NICC",
+      "to": "CKCC",
+      "weight": 80
+    },
+    {
+      "from": "Building D",
+      "to": "CKCC",
+      "weight": 64
+    },
+    {
+      "from": "Building B",
+      "to": "Building D",
+      "weight": 50
+    },
+    {
+      "from": "Building B",
+      "to": "Building Stem",
+      "weight": 50
+    },
+    {
+      "from": "Building D",
+      "to": "Building Stem",
+      "weight": 50
+    },
+    {
+      "from": "Study Office",
+      "to": "Building Stem",
+      "weight": 85
+    },
+    {
+      "from": "Study Office",
+      "to": "Canteen",
+      "weight": 60
+    },
+    {
+      "from": "Building C",
+      "to": "Building T",
+      "weight": 40
+    },
+    {
+      "from": "Building C",
+      "to": "Canteen",
+      "weight": 90
+    },
+    {
+      "from": "Building T",
+      "to": "Canteen",
+      "weight": 90
+    }
   ],
   "junctions": {
     "j1": {
