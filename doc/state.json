@@ -19,9 +19,14 @@
     },
     "Building C": {
       "category": "Academic",
-      "lat": 11.570169442317463,
-      "lng": 104.89102095365526,
-      "nearest_junction": "j12"
+      "lat": 11.570206230199151,
+      "lng": 104.89101558923723,
+      "nearest_junction": "j12",
+      "snap_lat": 11.570112946632577,
+      "snap_lng": 104.89123553037645,
+      "snap_j1": "j12",
+      "snap_j2": "j13",
+      "snap_t": 0
     },
     "Building D": {
       "category": "Academic",
@@ -42,20 +47,25 @@
     },
     "Building T": {
       "category": "Academic",
-      "lat": 11.57034812626897,
-      "lng": 104.8918041586876,
+      "lat": 11.570316593815228,
+      "lng": 104.89185512065889,
       "nearest_junction": "j13",
-      "snap_lat": 11.570190063901377,
-      "snap_lng": 104.89182484269129,
+      "snap_lat": 11.570196089616282,
+      "snap_lng": 104.89187088980958,
       "snap_j1": "j12",
       "snap_j2": "j13",
-      "snap_t": 0.7931825108443027
+      "snap_t": 0.8551594422480994
     },
     "CKCC": {
       "category": "Academic",
-      "lat": 11.569202444835868,
-      "lng": 104.88851845264436,
-      "nearest_junction": "j6"
+      "lat": 11.569160401391311,
+      "lng": 104.88845944404603,
+      "nearest_junction": "j6",
+      "snap_lat": 11.569177526872428,
+      "snap_lng": 104.88860479596485,
+      "snap_j1": "j6",
+      "snap_j2": "j5",
+      "snap_t": 0.0421369821049203
     },
     "Canteen": {
       "category": "Service",
@@ -81,20 +91,25 @@
     },
     "Library": {
       "category": "Service",
-      "lat": 11.568277487596804,
-      "lng": 104.88948941230775,
+      "lat": 11.568287998491696,
+      "lng": 104.8894089460373,
       "nearest_junction": "j3",
-      "snap_lat": 11.568150939030385,
-      "snap_lng": 104.88950708018741,
+      "snap_lat": 11.568140120607369,
+      "snap_lng": 104.88942959177623,
       "snap_j1": "j5",
       "snap_j2": "j3",
-      "snap_t": 0.7703953305409861
+      "snap_t": 0.6927346488343613
     },
     "NICC": {
       "category": "Service",
-      "lat": 11.568232519386843,
-      "lng": 104.88872766494752,
-      "nearest_junction": "j5"
+      "lat": 11.568282743044307,
+      "lng": 104.88850235939026,
+      "nearest_junction": "j5",
+      "snap_lat": 11.568306898050931,
+      "snap_lng": 104.88870737415965,
+      "snap_j1": "j6",
+      "snap_j2": "j5",
+      "snap_t": 0.7775970380620594
     },
     "Study Office": {
       "category": "Administration",
