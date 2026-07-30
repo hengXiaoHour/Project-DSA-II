@@ -7,7 +7,7 @@ A web-based interactive graph builder and shortest-path visualizer for **RUPP Ca
 ### One-liner setup (Linux/macOS)
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python3 main.py
+bash <(curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.sh) && .venv/bin/python main.py
 ```
 
 ### One-liner setup (Windows PowerShell)
