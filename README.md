@@ -4,25 +4,22 @@ A web-based interactive graph builder and shortest-path visualizer for **RUPP Ca
 
 ## Quick Start
 
-### First time setup (each teammate)
+### One-liner setup (Linux/macOS)
 
 ```bash
-git clone https://github.com/hengXiaoHour/Project-DSA-II.git
-cd Project-DSA-II
-git checkout V2
-python3 -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-python3 main.py
+python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python3 main.py
+```
+
+### One-liner setup (Windows PowerShell)
+
+```powershell
+python -m venv .venv; .\.venv\Scripts\Activate; pip install -r requirements.txt; python main.py
 ```
 
 ### After pulling updates
 
 ```bash
-git pull origin V2
-source .venv/bin/activate
-pip install -r requirements.txt   # if dependencies changed
-python3 main.py
+git pull origin V2 && source .venv/bin/activate && pip install -r requirements.txt && python3 main.py
 ```
 
 Then open **http://localhost:5000** in your browser.
