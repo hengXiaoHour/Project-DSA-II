@@ -10,16 +10,18 @@ A web-based interactive graph builder and shortest-path visualizer for **RUPP Ca
 git clone https://github.com/hengXiaoHour/Project-DSA-II.git
 cd Project-DSA-II
 git checkout V2
-curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/V2/setup/install.sh | bash && .venv/bin/python main.py
+curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.sh | bash
+.venv/bin/python main.py
 ```
 
-### Fresh setup (Windows)
+### Fresh setup (Windows PowerShell)
 
 ```powershell
 git clone https://github.com/hengXiaoHour/Project-DSA-II.git
 cd Project-DSA-II
 git checkout V2
-powershell -c "iwr -Uri https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.ps1 -OutFile install.ps1; .\install.ps1"; python main.py
+.\setup\install.ps1
+.venv\Scripts\python main.py
 ```
 
 ### After pulling updates
@@ -27,9 +29,8 @@ powershell -c "iwr -Uri https://raw.githubusercontent.com/hengXiaoHour/Project-D
 ```bash
 cd Project-DSA-II
 git pull origin V2
-source .venv/bin/activate
-pip install -r requirements.txt
-python3 main.py
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python main.py
 ```
 
 Then open **http://localhost:5000** in your browser.
