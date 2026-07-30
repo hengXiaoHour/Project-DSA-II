@@ -23,17 +23,21 @@ Project-DSA-II/
 │   ├── test_navigation.py
 │   └── test_api.py
 │
-├── script_dev/                 # Dev helper scripts
-│   ├── push.py                 # git add + commit + push to V2
-│   └── pull.py                 # git pull from V2
+├── setup/                       # One-liner install scripts
+│   ├── install.sh               # Linux/macOS (curl | bash)
+│   └── install.ps1              # Windows PowerShell
 │
-├── doc/                        # Data & docs
-│   ├── state.json              # Current campus state (auto-saved)
-│   ├── sample_campus.json      # Default sample campus data
-│   └── ARCHITECTURE.md         # This file
+├── script_dev/                  # Dev helper scripts
+│   ├── push.py                  # git add + commit + push to V2
+│   └── pull.py                  # git pull from V2
 │
-├── main.py                     # Entry point
-├── requirements.txt
+├── doc/                         # Data & docs
+│   ├── state.json               # Current campus state (auto-saved)
+│   ├── sample_campus.json       # Default sample campus data
+│   └── ARCHITECTURE.md          # This file
+│
+├── main.py                      # Entry point
+├── requirements.txt             # Flask, pytest, playwright
 └── README.md
 ```
 
