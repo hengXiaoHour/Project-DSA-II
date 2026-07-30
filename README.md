@@ -4,22 +4,32 @@ A web-based interactive graph builder and shortest-path visualizer for **RUPP Ca
 
 ## Quick Start
 
-### One-liner setup (Linux/macOS)
+### Fresh setup (Linux/macOS)
 
 ```bash
+git clone https://github.com/hengXiaoHour/Project-DSA-II.git
+cd Project-DSA-II
+git checkout V2
 bash <(curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.sh) && .venv/bin/python main.py
 ```
 
-### One-liner setup (Windows PowerShell)
+### Fresh setup (Windows)
 
 ```powershell
-powershell -c "iwr -Uri https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.ps1 -OutFile install.ps1; .\install.ps1; python main.py"
+git clone https://github.com/hengXiaoHour/Project-DSA-II.git
+cd Project-DSA-II
+git checkout V2
+powershell -c "iwr -Uri https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.ps1 -OutFile install.ps1; .\install.ps1"; python main.py
 ```
 
 ### After pulling updates
 
 ```bash
-git pull origin V2 && source .venv/bin/activate && pip install -r requirements.txt && python3 main.py
+cd Project-DSA-II
+git pull origin V2
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 main.py
 ```
 
 Then open **http://localhost:5000** in your browser.
