@@ -43,6 +43,25 @@
             font-size: 11px; color: #4a5568; font-family: monospace;
             white-space: pre-wrap; line-height: 1.6; margin-top: 4px;
         }
+        .category-tree { margin-top: 6px; }
+        .cat-header {
+            cursor: pointer; font-weight: 600; font-size: 12px;
+            padding: 4px 6px; border-radius: 4px; display: flex;
+            align-items: center; gap: 4px; user-select: none; color: #2d3748;
+        }
+        .cat-header:hover { background: #f7fafc; }
+        .cat-header .arrow {
+            display: inline-block; font-size: 10px; transition: transform 0.2s;
+            width: 12px; text-align: center; flex-shrink: 0;
+        }
+        .cat-header .arrow.open { transform: rotate(90deg); }
+        .cat-buildings { padding-left: 26px; display: none; }
+        .cat-buildings.open { display: block; }
+        .building-item {
+            padding: 3px 6px; font-size: 11px; color: #4a5568;
+            border-radius: 3px; cursor: default;
+        }
+        .building-item:hover { background: #edf2f7; }
 
         .switch-label {
             display: flex; align-items: center; gap: 4px;
@@ -319,7 +338,8 @@
                 <div class="tab-content hidden" id="tab-tree">
                     <h3>Category Tree</h3>
                     <div class="traversal-bar">
-                        <button class="traversal-btn active" data-trav="pre" onclick="loadTree('pre')">Pre-order</button>
+                        <button class="traversal-btn active" data-trav="cats" onclick="loadTreeCategories()">Categories</button>
+                        <button class="traversal-btn" data-trav="pre" onclick="loadTree('pre')">Pre-order</button>
                         <button class="traversal-btn" data-trav="post" onclick="loadTree('post')">Post-order</button>
                         <button class="traversal-btn" data-trav="level" onclick="loadTree('level')">Level-order</button>
                     </div>
@@ -875,7 +895,7 @@
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
             document.getElementById('tab-' + name).classList.remove('hidden');
             if (name === 'info') loadBuildingList();
-            if (name === 'tree') loadTree('pre');
+            if (name === 'tree') loadTreeCategories();
             if (name === 'graph') renderGraphTab();
         }
 
@@ -911,6 +931,36 @@
                 </div>`;
             })
             .catch(() => {});
+        }
+
+        function loadTreeCategories() {
+            document.querySelectorAll('.traversal-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.traversal-btn[data-trav="cats"]').classList.add('active');
+            fetch('/api/categories')
+            .then(r => r.json())
+            .then(cats => {
+                const div = document.getElementById('treeDisplay');
+                div.innerHTML = '<div class="category-tree">'
+                    + cats.map((c, i) => {
+                        const id = 'cat-' + i;
+                        return '<div class="cat-header" onclick="toggleCategory(\''+id+'\')">'
+                            + '<span class="arrow">&#9654;</span> ' + c.name
+                            + ' <span style="font-size:10px;color:#a0aec0;">(' + c.buildings.length + ')</span>'
+                            + '</div>'
+                            + '<div class="cat-buildings" id="'+id+'">'
+                            + c.buildings.map(b => '<div class="building-item">' + b + '</div>').join('')
+                            + '</div>';
+                    }).join('')
+                    + '</div>';
+            })
+            .catch(() => {});
+        }
+
+        function toggleCategory(id) {
+            const el = document.getElementById(id);
+            const arrow = el.previousElementSibling.querySelector('.arrow');
+            el.classList.toggle('open');
+            arrow.classList.toggle('open');
         }
 
         function loadTree(type) {
