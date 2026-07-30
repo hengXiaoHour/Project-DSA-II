@@ -13,7 +13,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/
 ### One-liner setup (Windows PowerShell)
 
 ```powershell
-python -m venv .venv; .\.venv\Scripts\Activate; pip install -r requirements.txt; python main.py
+powershell -c "iwr -Uri https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.ps1 -OutFile install.ps1; .\install.ps1; python main.py"
 ```
 
 ### After pulling updates
