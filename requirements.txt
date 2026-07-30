@@ -1,0 +1,5 @@
+Flask>=3.0
+pytest>=8.0
+playwright>=1.40
+pytest-base-url>=2.0
+pytest-playwright>=0.4
