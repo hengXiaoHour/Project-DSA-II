@@ -1,4 +1,4 @@
-# RUPP Campus Navigation — Interactive Graph Editor
+# RUPP Campus Navigation — Interactive Graph Editor (V2)
 
 A web-based interactive graph builder and shortest-path visualizer for **RUPP Campus 1**. Built with pure Python + Flask + Leaflet.js. Demonstrates **Graph (Dijkstra/BFS/DFS)**, **Hash Table** (O(1) lookup), and **Tree** (category hierarchy) data structures.
 
