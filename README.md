@@ -10,7 +10,7 @@ A web-based interactive graph builder and shortest-path visualizer for **RUPP Ca
 git clone https://github.com/hengXiaoHour/Project-DSA-II.git
 cd Project-DSA-II
 git checkout V2
-bash <(curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.sh) && .venv/bin/python main.py
+curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.sh | bash && .venv/bin/python main.py
 ```
 
 ### Fresh setup (Windows)
