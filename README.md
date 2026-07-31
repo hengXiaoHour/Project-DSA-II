@@ -2,7 +2,20 @@
 
 A web-based interactive graph builder and shortest-path visualizer for **RUPP Campus 1**. Built with pure Python + Flask + Leaflet.js. Demonstrates **Graph (Dijkstra/BFS/DFS)**, **Hash Table** (O(1) lookup), and **Tree** (category hierarchy) data structures.
 
+## Prerequisites
+
+- **Python 3** — install from https://python.org
+- **Git** (for clone method) — install from https://git-scm.com
+
 ## Quick Start
+
+### Fresh setup (Windows — auto-installs Git)
+
+One-liner, handles everything including installing Git if missing:
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "iwr -useb https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/V2/setup/bootstrap.ps1 | iex"
+```
 
 ### Fresh setup (Linux/macOS)
 
@@ -14,7 +27,7 @@ curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/se
 .venv/bin/python main.py
 ```
 
-### Fresh setup (Windows PowerShell)
+### Fresh setup (Windows — manual)
 
 ```powershell
 git clone https://github.com/hengXiaoHour/Project-DSA-II.git
