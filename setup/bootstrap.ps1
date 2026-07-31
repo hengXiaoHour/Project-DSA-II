@@ -5,22 +5,15 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Step 1 — Check/install Python (handles Microsoft Store stub)
-function Test-RealPython {
-    $result = $false
-    # Try py launcher first (more reliable on Windows)
-    try { $null = py --version; $script:PyCmd = "py"; return $true } catch {}
-    # Try python, but skip the Microsoft Store stub
-    try {
-        $ver = & python --version 2>&1
-        if ($LASTEXITCODE -eq 0 -and $ver -match "Python 3\.(1[3-9]|[2-9]\d)") {
-            $script:PyCmd = "python"; return $true
-        }
-    } catch {}
-    return $false
+# Step 1 — Ensure real Python is available
+function Get-PythonCmd {
+    try { $null = py --version; return "py" } catch {}
+    try { $ver = & python --version 2>&1; if ($LASTEXITCODE -eq 0 -and $ver -match "Python 3") { return "python" } } catch {}
+    return $null
 }
 
-if (-not (Test-RealPython)) {
+$PyCmd = Get-PythonCmd
+if (-not $PyCmd) {
     Write-Host "Python 3 not found. Installing Python 3.13 via winget..." -ForegroundColor Yellow
     winget install --id Python.Python.3.13 -e --silent
     if ($LASTEXITCODE -ne 0) {
@@ -28,6 +21,7 @@ if (-not (Test-RealPython)) {
         exit 1
     }
     $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
+    $PyCmd = Get-PythonCmd
 }
 & $PyCmd --version
 
