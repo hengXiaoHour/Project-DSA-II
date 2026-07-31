@@ -5,11 +5,24 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Step 1 — Check/install Git
+# Step 1 — Check/install Python
+$python = Get-Command python -ErrorAction SilentlyContinue
+if (-not $python) {
+    Write-Host "Python not found. Installing via winget..." -ForegroundColor Yellow
+    winget install --id Python.Python.3.13 -e --silent
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "winget failed. Install Python manually from https://python.org" -ForegroundColor Red
+        exit 1
+    }
+}
+# Refresh PATH
+$env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
+python --version
+
+# Step 2 — Check/install Git
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     Write-Host "Git not found. Installing via winget..." -ForegroundColor Yellow
     winget install --id Git.Git -e --silent
-    # Refresh PATH so git is available
     $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
 }
 git --version
