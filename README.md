@@ -21,11 +21,12 @@ curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/se
 
 ### Fresh setup (Windows)
 
+Open the project in **VS Code**, then run in its integrated terminal:
+
 ```powershell
-git clone https://github.com/hengXiaoHour/Project-DSA-II.git
-cd Project-DSA-II
 git checkout V2
-.\setup\install.ps1
+python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
 .venv\Scripts\python main.py
 ```
 
