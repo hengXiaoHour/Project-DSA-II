@@ -29,14 +29,15 @@ python -m venv .venv
 .venv\Scripts\python main.py
 ```
 
-### Fresh setup (terminal one-liner)
+### Fresh setup (Linux — true one-liner)
+
+Installs Python + Git + everything automatically (Debian/Ubuntu):
 
 ```bash
-git clone https://github.com/hengXiaoHour/Project-DSA-II.git
-cd Project-DSA-II
-curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.sh | bash
-.venv/bin/python main.py
+curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/bootstrap.sh | bash
 ```
+
+Then open **http://localhost:5000** after it finishes.
 
 ### After pulling updates
 
