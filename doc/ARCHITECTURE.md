@@ -28,8 +28,8 @@ Project-DSA-II/
 │   └── install.ps1              # Windows PowerShell
 │
 ├── script_dev/                  # Dev helper scripts
-│   ├── push.py                  # git add + commit + push to V2
-│   └── pull.py                  # git pull from V2
+│   ├── push.py                  # git add + commit + push to main
+│   └── pull.py                  # git pull from main
 │
 ├── doc/                         # Data & docs
 │   ├── state.json               # Current campus state (auto-saved)

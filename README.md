@@ -14,7 +14,6 @@ A web-based interactive graph builder and shortest-path visualizer for **RUPP Ca
 ```bash
 git clone https://github.com/hengXiaoHour/Project-DSA-II.git
 cd Project-DSA-II
-git checkout V2
 curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/setup/install.sh | bash
 .venv/bin/python main.py
 ```
@@ -24,7 +23,6 @@ curl -fsSL https://raw.githubusercontent.com/hengXiaoHour/Project-DSA-II/main/se
 Open the project in **VS Code**, then run in its integrated terminal:
 
 ```powershell
-git checkout V2
 python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 .venv\Scripts\python main.py
@@ -34,7 +32,7 @@ python -m venv .venv
 
 ```bash
 cd Project-DSA-II
-git pull origin V2
+git pull
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python main.py
 ```
